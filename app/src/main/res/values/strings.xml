@@ -1,3 +1,9 @@
 <resources>
+    <!-- App name & main titles-->
     <string name="app_name">Popular Movies</string>
+
+    <!-- App menu -->
+    <string name="settings_menu_item">Settings</string>
+
+    <!-- Default texts & hints (TextViews) -->
 </resources>
