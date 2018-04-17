@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/iv_film_poster"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:foregroundGravity="center"
+        android:contentDescription="Film poster" />
+
+    <TextView
+        android:id="@+id/tv_film_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:paddingStart="@dimen/film_title_horizontal_margin"
+        android:paddingLeft="@dimen/film_title_horizontal_margin"
+        android:paddingEnd="@dimen/film_title_horizontal_margin"
+        android:paddingRight="@dimen/film_title_horizontal_margin"
+        android:textSize="18sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:textColor="@color/colorFilmTitle" />
+
+</LinearLayout>

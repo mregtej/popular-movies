@@ -6,9 +6,9 @@ package com.udacity.popularmovies.model;
 public class PopularFilm {
 
     /** Film poster */
-    int filmPoster;
+    private int filmPoster;
     /** Film title */
-    String filmTitle;
+    private String filmTitle;
 
     /**
      * Public constructor
@@ -20,5 +20,21 @@ public class PopularFilm {
     {
         this.filmPoster = image;
         this.filmTitle = title;
+    }
+
+    public int getFilmPoster() {
+        return filmPoster;
+    }
+
+    public void setFilmPoster(int filmPoster) {
+        this.filmPoster = filmPoster;
+    }
+
+    public String getFilmTitle() {
+        return filmTitle;
+    }
+
+    public void setFilmTitle(String filmTitle) {
+        this.filmTitle = filmTitle;
     }
 }
