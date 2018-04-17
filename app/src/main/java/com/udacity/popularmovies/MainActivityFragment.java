@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 import com.udacity.popularmovies.model.PopularFilm;
 import com.udacity.popularmovies.utils.PopularFilmsAdapter;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class MainActivityFragment extends Fragment {
 
@@ -26,6 +28,8 @@ public class MainActivityFragment extends Fragment {
     private PopularFilmsAdapter popularFilmAdapter;
     /** RecyclerView LayoutManager instance */
     private RecyclerView.LayoutManager layoutManager;
+
+    private RecyclerView recyclerView;
 
     PopularFilm[] popularFilms = {
             new PopularFilm("Film 1", R.drawable.image_not_available_drawable),
@@ -52,7 +56,7 @@ public class MainActivityFragment extends Fragment {
         // Inflate Views
         // TODO - Butterknive usage
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        RecyclerView recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_popular_films);
+        recyclerView = (RecyclerView) rootView.findViewById(R.id.rv_popular_films);
         recyclerView.setHasFixedSize(true);
 
         // TODO Calculate optimal number of Grid-columns
@@ -63,9 +67,16 @@ public class MainActivityFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Load & set ArrayAdapter
-        popularFilmAdapter = new PopularFilmsAdapter(Arrays.asList(popularFilms));
+        popularFilmAdapter = new PopularFilmsAdapter();
         recyclerView.setAdapter(popularFilmAdapter);
+
         return rootView;
+    }
+
+    // Load & set ArrayAdapter
+    public void updateAdapter(ArrayList<PopularFilm> popularFilms) {
+        popularFilmAdapter.setPopularFilmList(popularFilms);
+        popularFilmAdapter.notifyDataSetChanged();
     }
 
     private int calculateOptimalNumberOfColumns() {

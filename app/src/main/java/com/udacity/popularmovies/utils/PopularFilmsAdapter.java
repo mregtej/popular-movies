@@ -1,23 +1,18 @@
 package com.udacity.popularmovies.utils;
 
-import android.content.Context;
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.udacity.popularmovies.R;
 import com.udacity.popularmovies.model.PopularFilm;
 
-import java.util.List;
+import java.util.ArrayList;
 
 /**
  * Popular Films RecyclerView Adapter
@@ -28,15 +23,22 @@ public class PopularFilmsAdapter extends RecyclerView.Adapter<PopularFilmsAdapte
     private static final String TAG = PopularFilmsAdapter.class.getSimpleName();
 
     /** List of Popular films - Model data ArrayList */
-    private List<PopularFilm> mPopularFilmList;
+    private ArrayList<PopularFilm> mPopularFilmList;
 
     /**
-     * Custom PopularFilms ArrayAdapterConstructor.
-     *
-     * @param popularFilmList   List of PopularFilm objects to display in a list.
+     * Empty Constructor for PopularFilms Adapter
      */
-    public PopularFilmsAdapter(List<PopularFilm> popularFilmList) {
-        mPopularFilmList = popularFilmList;
+    public PopularFilmsAdapter() {
+        mPopularFilmList = new ArrayList<PopularFilm>();
+    }
+
+    /**
+     * Set new data for populating the Adapter from JSON results
+     *
+     * @param popularFilmList  List of PopularFilm objects to display in a list.
+     */
+    public void setPopularFilmList(ArrayList<PopularFilm> popularFilmList) {
+        this.mPopularFilmList = popularFilmList;
     }
 
     @NonNull
