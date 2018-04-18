@@ -73,7 +73,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
-        if(mFilmList == null) {
+        if(mFilmList != null) {
             // Retrieve data from Model object
             Film popularFilm = mFilmList.get(position);
             // Load poster image
