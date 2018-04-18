@@ -1,4 +1,4 @@
-package com.udacity.popularmovies;
+package com.udacity.popularmovies.ui;
 
 import android.app.Fragment;
 import android.content.res.Resources;
@@ -10,12 +10,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.udacity.popularmovies.model.PopularFilm;
-import com.udacity.popularmovies.utils.PopularFilmsAdapter;
+import com.udacity.popularmovies.R;
+import com.udacity.popularmovies.model.Film;
+import com.udacity.popularmovies.adapter.FilmsAdapter;
+import com.udacity.popularmovies.model.Images;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class MainActivityFragment extends Fragment {
 
@@ -25,24 +25,11 @@ public class MainActivityFragment extends Fragment {
     private static final String TAG = MainActivity.class.getName();
 
     /** Popular films Custom ArrayAdapter */
-    private PopularFilmsAdapter popularFilmAdapter;
+    private FilmsAdapter popularFilmAdapter;
     /** RecyclerView LayoutManager instance */
     private RecyclerView.LayoutManager layoutManager;
 
     private RecyclerView recyclerView;
-
-    PopularFilm[] popularFilms = {
-            new PopularFilm("Film 1", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 2", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 3", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 4", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 5", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 6", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 7", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 8", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 9", R.drawable.image_not_available_drawable),
-            new PopularFilm("Film 10",R.drawable.image_not_available_drawable)
-    };
 
     /**
      * Empty constructor
@@ -67,16 +54,21 @@ public class MainActivityFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // Load & set ArrayAdapter
-        popularFilmAdapter = new PopularFilmsAdapter();
+        popularFilmAdapter = new FilmsAdapter();
         recyclerView.setAdapter(popularFilmAdapter);
 
         return rootView;
     }
 
     // Load & set ArrayAdapter
-    public void updateAdapter(ArrayList<PopularFilm> popularFilms) {
-        popularFilmAdapter.setPopularFilmList(popularFilms);
+    public void updateAdapter(ArrayList<Film> popularFilms) {
+        popularFilmAdapter.setFilmList(popularFilms);
         popularFilmAdapter.notifyDataSetChanged();
+    }
+
+    // Load & set ArrayAdapter
+    public void updateAPIConfiguration(Images images) {
+        popularFilmAdapter.setImages(images);
     }
 
     private int calculateOptimalNumberOfColumns() {

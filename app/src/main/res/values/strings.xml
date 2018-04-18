@@ -6,4 +6,5 @@
     <string name="settings_menu_item">Settings</string>
 
     <!-- Default texts & hints (TextViews) -->
+    <string name="no_film_title">Untitled</string>
 </resources>
