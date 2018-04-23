@@ -7,8 +7,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.udacity.popularmovies.R;
 import com.udacity.popularmovies.model.Film;
@@ -73,14 +75,6 @@ public class MainActivityFragment extends Fragment {
 
     private int calculateOptimalNumberOfColumns() {
         return 0;
-    }
-
-    private static int getScreenWidth() {
-        return Resources.getSystem().getDisplayMetrics().widthPixels;
-    }
-
-    private static int getScreenHeight() {
-        return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
 
 }

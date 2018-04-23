@@ -2,28 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:gravity="top|center_horizontal"
+    android:background="@drawable/film_selector"
+    android:padding="8dp" >
 
     <ImageView
         android:id="@+id/iv_film_poster"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="100dp"
+        android:layout_height="153dp"
         android:scaleType="centerCrop"
         android:foregroundGravity="center"
+        android:background="@drawable/film_poster_background"
         android:contentDescription="Film poster" />
 
     <TextView
         android:id="@+id/tv_film_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
         android:layout_gravity="center_horizontal"
         android:paddingStart="@dimen/film_title_horizontal_margin"
         android:paddingLeft="@dimen/film_title_horizontal_margin"
         android:paddingEnd="@dimen/film_title_horizontal_margin"
         android:paddingRight="@dimen/film_title_horizontal_margin"
-        android:textSize="18sp"
+        android:fontFamily="monospace"
+        android:background="@drawable/film_title_background"
+        android:textSize="14sp"
         android:textAllCaps="true"
         android:textStyle="bold"
-        android:textColor="@color/colorFilmTitle" />
+        android:text="@string/no_film_title"
+        android:maxLines="2" />
 
 </LinearLayout>

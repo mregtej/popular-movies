@@ -4,5 +4,9 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="colorFilmTitle">#CCCCCC</color>
+    <color name="film_view_selected">#CCCCCC</color>
+    <color name="film_view_non_selected">#FFFFFF</color>
+
+    <color name="film_title_background">#EEEEEE</color>
+    <color name="film_title_border">#AAAAAA</color>
 </resources>
