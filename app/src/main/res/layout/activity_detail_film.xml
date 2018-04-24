@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ui.DetailFilmActivity">
+
+    <TextView
+        android:id="@+id/tv_film_title_detail_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="32sp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/tv_film_release_date_detail_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_film_title_detail_view" />
+
+    <ImageView
+        android:id="@+id/iv_film_poster_detail_view"
+        android:layout_width="125dp"
+        android:layout_height="191dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/film_poster_background"
+        android:contentDescription="Film poster"
+        android:foregroundGravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintStart_toStartOf="@+id/tv_film_release_date_detail_view"
+        app:layout_constraintTop_toBottomOf="@+id/tv_film_release_date_detail_view" />
+
+    <TextView
+        android:id="@+id/tv_film_overview_detail_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="16dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintTop_toTopOf="@+id/iv_film_poster_detail_view" />
+
+    <ImageView
+        android:id="@+id/iv_film_rating_icon_detail_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/star_icon"
+        android:contentDescription="Film poster"
+        android:foregroundGravity="center"
+        android:scaleType="centerCrop"
+        app:layout_constraintEnd_toEndOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintStart_toStartOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintTop_toBottomOf="@+id/iv_film_poster_detail_view" />
+
+    <TextView
+        android:id="@+id/tv_film_rating_detail_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:foregroundGravity="center"
+        android:scaleType="centerCrop"
+        android:textSize="14sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintStart_toStartOf="@+id/iv_film_poster_detail_view"
+        app:layout_constraintTop_toBottomOf="@+id/iv_film_rating_icon_detail_view" />
+
+</android.support.constraint.ConstraintLayout>
