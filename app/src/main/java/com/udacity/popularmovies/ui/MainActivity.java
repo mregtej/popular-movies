@@ -28,15 +28,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = MainActivity.class.getName();
 
-    // TODO - insert your themoviedb.org API KEY here
-    private final static String API_KEY = "***REMOVED***";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (API_KEY.isEmpty()) {
+        if (getString(R.string.TMDB_API_KEY).isEmpty()) {
             Toast.makeText(getApplicationContext(),
                     "Please obtain your API KEY first from themoviedb.org",
                     Toast.LENGTH_LONG).show();
@@ -54,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
             ApiInterface apiService =
                     ApiClient.getClient().create(ApiInterface.class);
 
-            Call<APIConfigurationResponse> callConfig = apiService.getConfiguration(API_KEY);
+            Call<APIConfigurationResponse> callConfig = apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
             callConfig.enqueue(new Callback<APIConfigurationResponse>() {
                 @Override
                 public void onResponse(Call<APIConfigurationResponse> call, Response<APIConfigurationResponse> response) {
@@ -70,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Call<FilmResponse> call = apiService.getTopRatedMovies(API_KEY);
+            Call<FilmResponse> call = apiService.getTopRatedMovies(getString(R.string.TMDB_API_KEY));
             call.enqueue(new Callback<FilmResponse>() {
                 @Override
                 public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
@@ -99,7 +96,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.menuSortByMostPopular:
+                if(!item.isChecked()) {
+                    item.setChecked(true);
+                    // TODO Implement sort method
+                }
+                return true;
+            case R.id.menuSortByHighestRated:
+                if(!item.isChecked()) {
+                    item.setChecked(true);
+                    // TODO Implement sort method
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
