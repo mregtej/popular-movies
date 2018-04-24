@@ -28,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = MainActivity.class.getName();
 
+    private ApiInterface apiService;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,9 +50,10 @@ public class MainActivity extends AppCompatActivity {
             updateUI(null);
         } else {
 
-            ApiInterface apiService =
+            apiService =
                     ApiClient.getClient().create(ApiInterface.class);
 
+            // TODO Store results in a global object
             Call<APIConfigurationResponse> callConfig = apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
             callConfig.enqueue(new Callback<APIConfigurationResponse>() {
                 @Override
@@ -67,7 +70,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
-            Call<FilmResponse> call = apiService.getTopRatedMovies(getString(R.string.TMDB_API_KEY));
+            // TODO Default call. Use OnSharedPreferences to remember http request at initialization
+            Call<FilmResponse> call = apiService.getMostPopularMovies(getString(R.string.TMDB_API_KEY));
             call.enqueue(new Callback<FilmResponse>() {
                 @Override
                 public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
@@ -99,13 +103,43 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuSortByMostPopular:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    // TODO Implement sort method
+                    Call<FilmResponse> call = apiService.getMostPopularMovies(getString(R.string.TMDB_API_KEY));
+                    call.enqueue(new Callback<FilmResponse>() {
+                        @Override
+                        public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                            ArrayList<Film> films = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested most popular movies. " +
+                                    "Number of movies received: " + films.size());
+                            updateUI(films);
+                        }
+
+                        @Override
+                        public void onFailure(Call<FilmResponse> call, Throwable t) {
+                            // Log error here since request failed
+                            Log.e(TAG, t.toString());
+                        }
+                    });
                 }
                 return true;
-            case R.id.menuSortByHighestRated:
+            case R.id.menuSortByTopRated:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    // TODO Implement sort method
+                    Call<FilmResponse> call = apiService.getTopRatedMovies(getString(R.string.TMDB_API_KEY));
+                    call.enqueue(new Callback<FilmResponse>() {
+                        @Override
+                        public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                            ArrayList<Film> films = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested top rated movies. " +
+                                    "Number of movies received: " + films.size());
+                            updateUI(films);
+                        }
+
+                        @Override
+                        public void onFailure(Call<FilmResponse> call, Throwable t) {
+                            // Log error here since request failed
+                            Log.e(TAG, t.toString());
+                        }
+                    });
                 }
                 return true;
             default:
