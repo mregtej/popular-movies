@@ -1,4 +1,4 @@
-package com.udacity.popularmovies;
+package com.udacity.pmovies;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

@@ -1,4 +1,4 @@
-package com.udacity.popularmovies;
+package com.udacity.pmovies;
 
 import org.junit.Test;
 

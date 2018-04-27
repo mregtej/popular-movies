@@ -1,12 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- MainActivity & Fragment dimensions and paddings -->
-    <dimen name="column_width_main_activity">150dp</dimen>
 
-    <!-- Film Item Model dimens and paddings -->
-    <dimen name="film_poster_width">200dp</dimen>
-    <dimen name="film_poster_height">200dp</dimen>
+    <!-- MainActivity GridView: dimens and paddings -->
+    <dimen name="film_gridview_padding">4dp</dimen>
+    <dimen name="film_poster_width">125dp</dimen>
+    <dimen name="film_poster_height">191dp</dimen>
+    <dimen name="film_poster_padding">1dp</dimen>
+    <dimen name="film_title_height">38dp</dimen>
+
+    <!-- DetailFilmActivity: dimens, margins and paddings -->
+    <dimen name="film_scrollview_bottom_padding">16dp</dimen>
+    <dimen name="film_backdrop_portrait_height">200dp</dimen>
+    <dimen name="film_backdrop_landscape_height">150dp</dimen>
     <dimen name="film_title_vertical_margin">8dp</dimen>
     <dimen name="film_title_horizontal_margin">8dp</dimen>
+    <dimen name="film_section_divider_height">1dp</dimen>
+    <dimen name="film_section_divider_horizonzal_margin">8dp</dimen>
+    <dimen name="film_section_divider_vertical_margin">8dp</dimen>
+    <dimen name="film_release_date_horizontal_margin">16dp</dimen>
+    <dimen name="film_poster_vertical_margin">16dp</dimen>
+    <dimen name="film_overview_horizontal_margin">16dp</dimen>
+    <dimen name="film_overview_vertical_margin">8dp</dimen>
+    <dimen name="film_rating_icon_width">48dp</dimen>
+    <dimen name="film_rating_icon_height">48dp</dimen>
+    <dimen name="film_rating_icon_vertical_margin">8dp</dimen>
+    <dimen name="film_rating_vertical_margin">6dp</dimen>
 
 </resources>

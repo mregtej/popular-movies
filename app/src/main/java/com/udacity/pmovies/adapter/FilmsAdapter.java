@@ -1,4 +1,4 @@
-package com.udacity.popularmovies.adapter;
+package com.udacity.pmovies.adapter;
 
 import android.content.Context;
 import android.content.Intent;
@@ -12,15 +12,18 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.popularmovies.R;
-import com.udacity.popularmovies.model.Film;
-import com.udacity.popularmovies.model.Images;
-import com.udacity.popularmovies.ui.DetailFilmActivity;
+import com.udacity.pmovies.R;
+import com.udacity.pmovies.globals.GlobalsPopularMovies;
+import com.udacity.pmovies.model.Film;
+import com.udacity.pmovies.model.Images;
+import com.udacity.pmovies.ui.DetailFilmActivity;
 
 import java.util.ArrayList;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * Popular Films RecyclerView Adapter
@@ -30,13 +33,16 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     /** Log TAG - Class Name */
     private static final String TAG = FilmsAdapter.class.getSimpleName();
 
+    /** Aspect Ratio of Film poster (PosterWidth / PosterHeight) */
+    private static final double FILM_POSTER_ASPECT_RATIO = 0.6537;
+
     private static final String DEFAULT_BASE_URL = "https://image.tmdb.org/t/p/";
     private static final String DEFAULT_POSTER_WIDTH = "w185";
 
     /** List of films - Model data ArrayList<Film> */
     private ArrayList<Film> mFilmList;
     /** API Configuration - Model data Images */
-    private Images mImages;
+    Images mImages;
     /** Activity Context */
     private Context mContext;
 
@@ -48,7 +54,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      */
     public FilmsAdapter() {
         mFilmList = new ArrayList<Film>();
-        mImages = null;
+        mImages = Images.getInstance();
         mScreenHeight = getScreenHeight();
         mScreenWidth = getScreenWidth();
     }
@@ -60,14 +66,6 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      */
     public void setFilmList(ArrayList<Film> FilmList) {
         this.mFilmList = FilmList;
-    }
-
-    /**
-     * Set API Configuration from JSON results
-     * @param mImages   Images' API Configuration
-     */
-    public void setImages(Images mImages) {
-        this.mImages = mImages;
     }
 
     @NonNull
@@ -102,19 +100,42 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView filmPosterImageView;
-        private TextView filmTitleTextView;
+        @BindView(R.id.iv_film_poster) ImageView filmPosterImageView;
+        @BindView(R.id.tv_film_title) TextView filmTitleTextView;
         private View filmLayout;
 
         public ViewHolder(View v) {
             super(v);
             filmLayout = v;
+            ButterKnife.bind(this, v);
             filmPosterImageView = (ImageView) v.findViewById(R.id.iv_film_poster);
             filmTitleTextView = (TextView) v.findViewById(R.id.tv_film_title);
-            // TODO Improve performance (calc of padding & keep ratio-aspect)
-            filmPosterImageView.setLayoutParams(new LinearLayout.LayoutParams(
-                    (mScreenWidth / 3) - 48,
-                    (int)(((mScreenWidth / 3) - 48) * 1.528) ));
+
+            // Resize film poster size
+            resizeFilmPoster();
+        }
+
+        /**
+         * Resize the film poster according to screen-sizes and the following conditions:
+         *  - 3 films per row in portrait view
+         *  - 4 films per row in landscape mode
+         */
+        private void resizeFilmPoster() {
+            int width;
+            int height;
+            switch (mContext.getResources().getConfiguration().orientation) {
+                case GlobalsPopularMovies.LANDSCAPE_VIEW: // Landscape Mode
+                    width = ((mScreenWidth) / GlobalsPopularMovies.GRIDVIEW_LANDSCAPE_NUMBER_OF_COLUMNS);
+                    height = (int) (width / FILM_POSTER_ASPECT_RATIO);
+                    filmPosterImageView.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+                    break;
+                case GlobalsPopularMovies.PORTRAIT_VIEW: // Portrait Mode
+                default:
+                    width = ((mScreenWidth) / GlobalsPopularMovies.GRIDVIEW_PORTRAIT_NUMBER_OF_COLUMNS);
+                    height = (int) (width / FILM_POSTER_ASPECT_RATIO);
+                    filmPosterImageView.setLayoutParams(new LinearLayout.LayoutParams(width, height));
+                    break;
+            }
         }
     }
 
@@ -134,7 +155,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
         // Set poster image
         // Build poster path:
         // base_url + file_size + file_path
-        // TODO Adjust width via arrayString file_size
+        // TODO Choose best poster-size according to device resolution
         String filmPosterURL;
         if(mImages != null) {
             filmPosterURL =
@@ -147,13 +168,12 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
                             + DEFAULT_POSTER_WIDTH + "/"
                             + film.getPosterPath();
         }
-        // TODO Resize width/height according to screen sizes
         Picasso
                 .with(mContext)
                 .load(filmPosterURL)
                 .fit()
                 .centerCrop()
-                .error(R.drawable.image_not_available_drawable)
+                .error(R.drawable.im_image_not_available)
                 .into(holder.filmPosterImageView);
         // Set title of film
         holder.filmTitleTextView.setText(film.getTitle());

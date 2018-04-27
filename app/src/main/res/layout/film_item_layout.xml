@@ -5,13 +5,17 @@
     android:orientation="vertical"
     android:gravity="top|center_horizontal"
     android:background="@drawable/film_selector"
-    android:padding="8dp" >
+    android:padding="@dimen/film_gridview_padding" >
 
     <ImageView
         android:id="@+id/iv_film_poster"
-        android:layout_width="100dp"
-        android:layout_height="153dp"
+        android:layout_width="@dimen/film_poster_width"
+        android:layout_height="@dimen/film_poster_height"
         android:scaleType="centerCrop"
+        android:paddingLeft="@dimen/film_poster_padding"
+        android:paddingStart="@dimen/film_poster_padding"
+        android:paddingRight="@dimen/film_poster_padding"
+        android:paddingEnd="@dimen/film_poster_padding"
         android:foregroundGravity="center"
         android:background="@drawable/film_poster_background"
         android:contentDescription="Film poster" />
@@ -19,13 +23,9 @@
     <TextView
         android:id="@+id/tv_film_title"
         android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:layout_gravity="center_horizontal"
-        android:paddingStart="@dimen/film_title_horizontal_margin"
-        android:paddingLeft="@dimen/film_title_horizontal_margin"
-        android:paddingEnd="@dimen/film_title_horizontal_margin"
-        android:paddingRight="@dimen/film_title_horizontal_margin"
-        android:fontFamily="monospace"
+        android:layout_height="@dimen/film_title_height"
+        android:gravity="center_horizontal"
+        android:fontFamily="sans-serif"
         android:background="@drawable/film_title_background"
         android:textSize="14sp"
         android:textAllCaps="true"

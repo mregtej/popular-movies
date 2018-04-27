@@ -1,10 +1,10 @@
-package com.udacity.popularmovies.model;
+package com.udacity.pmovies.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class Images {
+public final class Images {
     @SerializedName("base_url")
     private String baseUrl;
     @SerializedName("secure_base_url")
@@ -20,16 +20,22 @@ public class Images {
     @SerializedName("still_sizes")
     private ArrayList<String> stillSizes;
 
-    public Images(String baseUrl, String secureBaseUrl, ArrayList<String> backdropSizes,
-                  ArrayList<String> logoSizes, ArrayList<String> posterSizes,
-                  ArrayList<String> profileSizes, ArrayList<String> stillSizes) {
-        this.baseUrl = baseUrl;
-        this.secureBaseUrl = secureBaseUrl;
-        this.backdropSizes = backdropSizes;
-        this.logoSizes = logoSizes;
-        this.posterSizes = posterSizes;
-        this.profileSizes = profileSizes;
-        this.stillSizes = stillSizes;
+    private static final Images INSTANCE = new Images();
+
+    public static Images getInstance() {
+        return INSTANCE;
+    }
+
+    private Images() { }
+
+    public void setImageFields(Images images) {
+        this.baseUrl = images.secureBaseUrl;
+        this.secureBaseUrl = images.secureBaseUrl;
+        this.backdropSizes = images.backdropSizes;
+        this.logoSizes = images.logoSizes;
+        this.posterSizes = images.posterSizes;
+        this.profileSizes = images.profileSizes;
+        this.stillSizes = images.stillSizes;
     }
 
     public String getBaseUrl() {

@@ -1,4 +1,4 @@
-package com.udacity.popularmovies.model;
+package com.udacity.pmovies.model;
 
 import com.google.gson.annotations.SerializedName;
 

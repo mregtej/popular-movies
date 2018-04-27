@@ -12,12 +12,10 @@
         android:orientation="vertical"
         tools:context=".ui.DetailFilmActivity">
 
-        <!-- TODO Improve UX design - Scroll-efects, such as colapsing the backdrop img -->
-
         <ImageView
             android:id="@+id/iv_film_backdrop_detail_view"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/film_backdrop_portrait_height"
+            android:layout_height="@dimen/film_backdrop_landscape_height"
             android:contentDescription="@string/film_backdrop_content_description"
             android:foregroundGravity="center"
             android:scaleType="centerCrop" />
@@ -81,12 +79,12 @@
         <TextView
             android:id="@+id/tv_film_genres_detail_view"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="17dp"
             android:layout_marginTop="8dp"
             android:fontFamily="sans-serif"
-            android:text="aaaaaaaaaaaaaaaaaa"
             android:textSize="12sp"
             app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@+id/tv_film_release_date_title_detail_view"
             app:layout_constraintTop_toBottomOf="@+id/tv_film_release_date_title_detail_view" />
 
@@ -106,6 +104,8 @@
             android:id="@+id/tv_film_overview_detail_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginLeft="@dimen/film_overview_horizontal_margin"
+            android:layout_marginStart="@dimen/film_overview_horizontal_margin"
             android:layout_marginTop="@dimen/film_overview_vertical_margin"
             android:fontFamily="sans-serif"
             android:maxLines="8"
@@ -113,7 +113,7 @@
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/iv_film_poster_detail_view"
             app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/tv_film_genres_detail_view"
+            app:layout_constraintStart_toEndOf="@+id/iv_film_poster_detail_view"
             app:layout_constraintTop_toBottomOf="@+id/tv_film_genres_detail_view" />
 
         <ImageView

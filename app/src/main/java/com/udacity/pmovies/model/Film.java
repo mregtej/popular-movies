@@ -1,4 +1,4 @@
-package com.udacity.popularmovies.model;
+package com.udacity.pmovies.model;
 
 import android.net.Uri;
 import android.os.Parcel;
@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Film Model
@@ -144,7 +145,6 @@ public class Film implements Parcelable {
         dest.writeDouble(this.voteAverage);
     }
 
-    // TODO GET /configuration to retrieve base_url and logo_sizes
     public String getPosterPath() {
         return this.posterPath;
     }
@@ -270,11 +270,9 @@ public class Film implements Parcelable {
 
     private static ArrayList<Integer> convertArrayListOfIntegers(int[] integers)
     {
-        ArrayList<Integer> ret = new ArrayList<Integer>(integers.length);
-        Iterator<Integer> iterator = ret.iterator();
-        for (int i = 0; i < ret.size(); i++)
-        {
-            ret.set(i, integers[i]);
+        ArrayList<Integer> ret = new ArrayList<Integer>();
+        for (int i = 0; i < integers.length; i++) {
+            ret.add(integers[i]);
         }
         return ret;
     }

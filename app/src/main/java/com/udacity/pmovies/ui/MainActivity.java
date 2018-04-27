@@ -1,4 +1,4 @@
-package com.udacity.popularmovies.ui;
+package com.udacity.pmovies.ui;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -10,13 +10,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.udacity.popularmovies.R;
-import com.udacity.popularmovies.model.APIConfigurationResponse;
-import com.udacity.popularmovies.model.Film;
-import com.udacity.popularmovies.model.FilmResponse;
-import com.udacity.popularmovies.model.Images;
-import com.udacity.popularmovies.rest.ApiClient;
-import com.udacity.popularmovies.rest.ApiInterface;
+import com.udacity.pmovies.R;
+import com.udacity.pmovies.model.APIConfigurationResponse;
+import com.udacity.pmovies.model.Film;
+import com.udacity.pmovies.model.FilmResponse;
+import com.udacity.pmovies.model.Genres;
+import com.udacity.pmovies.model.GenresResponse;
+import com.udacity.pmovies.model.Images;
+import com.udacity.pmovies.rest.ApiClient;
+import com.udacity.pmovies.rest.ApiInterface;
 
 import java.util.ArrayList;
 
@@ -46,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         if (networkInfo == null || !networkInfo.isConnected() ||
                 (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
                         && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
+            // TODO Handle properly no connectivity issues
             // If no connectivity, cancel task and update Callback with null data.
             updateUI(null);
         } else {
@@ -53,14 +56,17 @@ public class MainActivity extends AppCompatActivity {
             apiService =
                     ApiClient.getClient().create(ApiInterface.class);
 
-            // TODO Store results in a global object
-            Call<APIConfigurationResponse> callConfig = apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
+            // get /configuration
+            // https://developers.themoviedb.org/3/configuration/get-api-configuration
+            Call<APIConfigurationResponse> callConfig =
+                    apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
             callConfig.enqueue(new Callback<APIConfigurationResponse>() {
                 @Override
-                public void onResponse(Call<APIConfigurationResponse> call, Response<APIConfigurationResponse> response) {
-                    final Images images = response.body().getImages();
-                    Log.d(TAG, "Config received");
-                    updateAPIConfiguration(images);
+                public void onResponse(Call<APIConfigurationResponse> call,
+                                       Response<APIConfigurationResponse> response) {
+                    Images images = Images.getInstance();
+                    images.setImageFields(response.body().getImages());
+                    Log.d(TAG, "TMDB API Config received");
                 }
 
                 @Override
@@ -70,8 +76,31 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+            // get /genre/movie/list
+            // https://developers.themoviedb.org/3/genres/get-movie-list
+            Call<GenresResponse> callGenres =
+                    apiService.getGenres(getString(R.string.TMDB_API_KEY));
+            callGenres.enqueue(new Callback<GenresResponse>() {
+                @Override
+                public void onResponse(Call<GenresResponse> call,
+                                       Response<GenresResponse> response) {
+                    GenresResponse genres = GenresResponse.getInstance();
+                    genres.setGenres(response.body().getGenres());
+                    Log.d(TAG, "TMDB Genres received");
+                }
+
+                @Override
+                public void onFailure(Call<GenresResponse> call, Throwable t) {
+                    // Log error here since request failed
+                    Log.e(TAG, t.toString());
+                }
+            });
+
             // TODO Default call. Use OnSharedPreferences to remember http request at initialization
-            Call<FilmResponse> call = apiService.getMostPopularMovies(getString(R.string.TMDB_API_KEY));
+            // get /movie/popular
+            // https://developers.themoviedb.org/3/movies/get-popular-movies
+            Call<FilmResponse> call = apiService.getMostPopularMovies(
+                    getString(R.string.TMDB_API_KEY));
             call.enqueue(new Callback<FilmResponse>() {
                 @Override
                 public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
@@ -103,10 +132,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuSortByMostPopular:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    Call<FilmResponse> call = apiService.getMostPopularMovies(getString(R.string.TMDB_API_KEY));
+                    // get /movie/popular
+                    // https://developers.themoviedb.org/3/movies/get-popular-movies
+                    Call<FilmResponse> call = apiService.getMostPopularMovies(
+                            getString(R.string.TMDB_API_KEY));
                     call.enqueue(new Callback<FilmResponse>() {
                         @Override
-                        public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                        public void onResponse(Call<FilmResponse> call,
+                                               Response<FilmResponse> response) {
                             ArrayList<Film> films = response.body().getResults();
                             Log.d(TAG, "TMDB - Requested most popular movies. " +
                                     "Number of movies received: " + films.size());
@@ -124,10 +157,14 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuSortByTopRated:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    Call<FilmResponse> call = apiService.getTopRatedMovies(getString(R.string.TMDB_API_KEY));
+                    // get /movie/top_rated
+                    // https://developers.themoviedb.org/3/movies/get-top-rated-movies
+                    Call<FilmResponse> call = apiService.getTopRatedMovies(
+                            getString(R.string.TMDB_API_KEY));
                     call.enqueue(new Callback<FilmResponse>() {
                         @Override
-                        public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                        public void onResponse(Call<FilmResponse> call,
+                                               Response<FilmResponse> response) {
                             ArrayList<Film> films = response.body().getResults();
                             Log.d(TAG, "TMDB - Requested top rated movies. " +
                                     "Number of movies received: " + films.size());
@@ -160,15 +197,6 @@ public class MainActivity extends AppCompatActivity {
                 getFragmentManager().findFragmentById(R.id.fr_main);
         if (mainActivityFragment != null) {
             mainActivityFragment.updateAdapter(filmList);
-        }
-    }
-
-    private void updateAPIConfiguration(Images images) {
-        // Update your UI here based on result of download.
-        MainActivityFragment mainActivityFragment = (MainActivityFragment)
-                getFragmentManager().findFragmentById(R.id.fr_main);
-        if (mainActivityFragment != null) {
-            mainActivityFragment.updateAPIConfiguration(images);
         }
     }
 
