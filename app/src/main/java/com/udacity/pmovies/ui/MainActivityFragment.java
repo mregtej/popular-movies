@@ -51,7 +51,6 @@ public class MainActivityFragment extends Fragment {
 
         // Load & set ArrayAdapter
         popularFilmAdapter = new FilmsAdapter();
-        recyclerView.setAdapter(popularFilmAdapter);
 
         return rootView;
     }
@@ -59,6 +58,7 @@ public class MainActivityFragment extends Fragment {
     // Load & set ArrayAdapter
     public void updateAdapter(ArrayList<Film> popularFilms) {
         popularFilmAdapter.setFilmList(popularFilms);
+        recyclerView.setAdapter(popularFilmAdapter);
         popularFilmAdapter.notifyDataSetChanged();
     }
 

@@ -10,6 +10,21 @@
     <!--DetailFilmActivity strings -->
     <string name="film_rating">%s/10</string>
 
+    <!-- Connectivity AlertDialog (Wifi/3G) strings -->
+    <string name="network_failure">Network connection failure</string>
+    <string name="network_user_choice">No active network connection. The application cannot run
+        properly. What would you like to do?</string>
+    <string name="network_user_choice_no">Close App</string>
+    <string name="network_user_choice_3g">Enable 3G</string>
+    <string name="network_user_choice_wifi">Enable Wi-Fi</string>
+
+    <!--No TMDB API Key AlertDialog stings-->
+    <string name="no_api_key_failure">TMDB API Key failure.</string>
+    <string name="no_api_key_user_choice">No TMDB API key. Data cannot be retrieved.
+        In case you have already a valid API KEY, please read README.txt.
+        Otherwise, please obtain your API KEY first from www.themoviedb.org</string>
+    <string name="no_api_key_open_website">Open TMDB API FAQ</string>
+
     <!-- Titles, default texts and hints (TextViews) -->
     <string name="no_film_title">Untitled</string>
     <string name="no_film_categories">Uncategorized</string>

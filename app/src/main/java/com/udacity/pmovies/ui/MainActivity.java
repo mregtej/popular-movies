@@ -1,24 +1,25 @@
 package com.udacity.pmovies.ui;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.udacity.pmovies.R;
+import com.udacity.pmovies.comms.ConnectivityHandler;
 import com.udacity.pmovies.model.APIConfigurationResponse;
 import com.udacity.pmovies.model.Film;
 import com.udacity.pmovies.model.FilmResponse;
-import com.udacity.pmovies.model.Genres;
 import com.udacity.pmovies.model.GenresResponse;
 import com.udacity.pmovies.model.Images;
 import com.udacity.pmovies.rest.ApiClient;
 import com.udacity.pmovies.rest.ApiInterface;
+import com.udacity.pmovies.ui.widgets.AlertDialogHelper;
 
 import java.util.ArrayList;
 
@@ -36,88 +37,86 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
-        // Check empty API_KEY
-        if (getString(R.string.TMDB_API_KEY).isEmpty()) {
-            Toast.makeText(getApplicationContext(),
-                    "Please obtain your API KEY first from themoviedb.org",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-        NetworkInfo networkInfo = getActiveNetworkInfo();
-        if (networkInfo == null || !networkInfo.isConnected() ||
-                (networkInfo.getType() != ConnectivityManager.TYPE_WIFI
-                        && networkInfo.getType() != ConnectivityManager.TYPE_MOBILE)) {
-            // TODO Handle properly no connectivity issues
-            // If no connectivity, cancel task and update Callback with null data.
-            updateUI(null);
+        // Check network connectivity
+        if(!ConnectivityHandler.checkConnectivity(this)) {
+            displayConnectivityAlertDialog();
         } else {
 
-            apiService =
-                    ApiClient.getClient().create(ApiInterface.class);
+            // Check empty API_KEY
+            if (getString(R.string.TMDB_API_KEY).isEmpty()) {
+                displayNoApiKeyAlertDialog();
+            } else {
 
-            // get /configuration
-            // https://developers.themoviedb.org/3/configuration/get-api-configuration
-            Call<APIConfigurationResponse> callConfig =
-                    apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
-            callConfig.enqueue(new Callback<APIConfigurationResponse>() {
-                @Override
-                public void onResponse(Call<APIConfigurationResponse> call,
-                                       Response<APIConfigurationResponse> response) {
-                    Images images = Images.getInstance();
-                    images.setImageFields(response.body().getImages());
-                    Log.d(TAG, "TMDB API Config received");
-                }
+                apiService =
+                        ApiClient.getClient().create(ApiInterface.class);
 
-                @Override
-                public void onFailure(Call<APIConfigurationResponse> call, Throwable t) {
-                    // Log error here since request failed
-                    Log.e(TAG, t.toString());
-                }
-            });
+                // get /configuration
+                // https://developers.themoviedb.org/3/configuration/get-api-configuration
+                Call<APIConfigurationResponse> callConfig =
+                        apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
+                callConfig.enqueue(new Callback<APIConfigurationResponse>() {
+                    @Override
+                    public void onResponse(Call<APIConfigurationResponse> call,
+                                           Response<APIConfigurationResponse> response) {
+                        Images images = Images.getInstance();
+                        images.setImageFields(response.body().getImages());
+                        Log.d(TAG, "TMDB API Config received");
+                    }
 
-            // get /genre/movie/list
-            // https://developers.themoviedb.org/3/genres/get-movie-list
-            Call<GenresResponse> callGenres =
-                    apiService.getGenres(getString(R.string.TMDB_API_KEY));
-            callGenres.enqueue(new Callback<GenresResponse>() {
-                @Override
-                public void onResponse(Call<GenresResponse> call,
-                                       Response<GenresResponse> response) {
-                    GenresResponse genres = GenresResponse.getInstance();
-                    genres.setGenres(response.body().getGenres());
-                    Log.d(TAG, "TMDB Genres received");
-                }
+                    @Override
+                    public void onFailure(Call<APIConfigurationResponse> call, Throwable t) {
+                        // Log error here since request failed
+                        Log.e(TAG, t.toString());
+                    }
+                });
 
-                @Override
-                public void onFailure(Call<GenresResponse> call, Throwable t) {
-                    // Log error here since request failed
-                    Log.e(TAG, t.toString());
-                }
-            });
+                // get /genre/movie/list
+                // https://developers.themoviedb.org/3/genres/get-movie-list
+                Call<GenresResponse> callGenres =
+                        apiService.getGenres(getString(R.string.TMDB_API_KEY));
+                callGenres.enqueue(new Callback<GenresResponse>() {
+                    @Override
+                    public void onResponse(Call<GenresResponse> call,
+                                           Response<GenresResponse> response) {
+                        GenresResponse genres = GenresResponse.getInstance();
+                        genres.setGenres(response.body().getGenres());
+                        Log.d(TAG, "TMDB Genres received");
+                    }
 
-            // TODO Default call. Use OnSharedPreferences to remember http request at initialization
-            // get /movie/popular
-            // https://developers.themoviedb.org/3/movies/get-popular-movies
-            Call<FilmResponse> call = apiService.getMostPopularMovies(
-                    getString(R.string.TMDB_API_KEY));
-            call.enqueue(new Callback<FilmResponse>() {
-                @Override
-                public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                    ArrayList<Film> films = response.body().getResults();
-                    Log.d(TAG, "Number of movies received: " + films.size());
-                    updateUI(films);
-                }
+                    @Override
+                    public void onFailure(Call<GenresResponse> call, Throwable t) {
+                        // Log error here since request failed
+                        Log.e(TAG, t.toString());
+                    }
+                });
 
-                @Override
-                public void onFailure(Call<FilmResponse> call, Throwable t) {
-                    // Log error here since request failed
-                    Log.e(TAG, t.toString());
-                }
-            });
+                // TODO Default call. Use OnSharedPreferences to remember http request at initialization
+                // get /movie/popular
+                // https://developers.themoviedb.org/3/movies/get-popular-movies
+                Call<FilmResponse> call = apiService.getMostPopularMovies(
+                        getString(R.string.TMDB_API_KEY));
+                call.enqueue(new Callback<FilmResponse>() {
+                    @Override
+                    public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
+                        ArrayList<Film> films = response.body().getResults();
+                        Log.d(TAG, "Number of movies received: " + films.size());
+                        populateUI(films);
+                    }
+
+                    @Override
+                    public void onFailure(Call<FilmResponse> call, Throwable t) {
+                        // Log error here since request failed
+                        Log.e(TAG, t.toString());
+                    }
+                });
+            }
         }
-
     }
 
     @Override
@@ -144,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Film> films = response.body().getResults();
                             Log.d(TAG, "TMDB - Requested most popular movies. " +
                                     "Number of movies received: " + films.size());
-                            updateUI(films);
+                            populateUI(films);
                         }
 
                         @Override
@@ -169,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                             ArrayList<Film> films = response.body().getResults();
                             Log.d(TAG, "TMDB - Requested top rated movies. " +
                                     "Number of movies received: " + films.size());
-                            updateUI(films);
+                            populateUI(films);
                         }
 
                         @Override
@@ -185,14 +184,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private NetworkInfo getActiveNetworkInfo() {
-        ConnectivityManager connectivityManager =
-                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo;
-    }
-
-    private void updateUI(ArrayList<Film> filmList) {
+    /**
+     * Populate UI elements with data retrieved from TMDB.
+     * ArrayList of Films shall be propagated to the Fragment.
+     *
+     * @param   filmList    ArrayList of films retrieved from TMDB response.
+     */
+    private void populateUI(ArrayList<Film> filmList) {
         // Update your UI here based on result of download.
         MainActivityFragment mainActivityFragment = (MainActivityFragment)
                 getFragmentManager().findFragmentById(R.id.fr_main);
@@ -201,4 +199,75 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Display an AlertDialog to warn user that there is no Internet connectivity
+     */
+    private void displayConnectivityAlertDialog() {
+        AlertDialog connectivityDialog = AlertDialogHelper.createMessage(
+                this,
+                this.getResources().getString(R.string.network_failure),
+                this.getResources().getString(R.string.network_user_choice),
+                this.getResources().getString(R.string.network_user_choice_wifi),
+                this.getResources().getString(R.string.network_user_choice_3g),
+                this.getResources().getString(R.string.network_user_choice_no),
+                false
+        );
+        connectivityDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                this.getResources().getString(R.string.network_user_choice_wifi),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent(
+                                android.provider.Settings.ACTION_WIFI_SETTINGS));
+                    }
+                });
+        connectivityDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
+                this.getResources().getString(R.string.network_user_choice_3g),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        startActivity(new Intent
+                                (android.provider.Settings.ACTION_DATA_ROAMING_SETTINGS));
+                    }
+                });
+        connectivityDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
+                this.getResources().getString(R.string.network_user_choice_no),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        finish();
+                    }
+                });
+        connectivityDialog.show();
+    }
+
+    /**
+     * Display an AlertDialog to warn user that no API was found.
+     *
+     * TODO Allow users to add it manually (EditText + storage in SharedPreferences?
+     */
+    private void displayNoApiKeyAlertDialog() {
+        AlertDialog noApiKeyDialog = AlertDialogHelper.createMessage(
+                this,
+                this.getResources().getString(R.string.no_api_key_failure),
+                this.getResources().getString(R.string.no_api_key_user_choice),
+                this.getResources().getString(R.string.no_api_key_open_website),
+                false
+        );
+        noApiKeyDialog.setButton(DialogInterface.BUTTON_POSITIVE,
+                this.getResources().getString(R.string.no_api_key_open_website),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        String url = "http://www.themoviedb.org/faq/api?language=en";
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                        finish();
+                    }
+                });
+        noApiKeyDialog.show();
+    }
 }
