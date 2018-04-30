@@ -12,7 +12,8 @@
     <!-- DetailFilmActivity: dimens, margins and paddings -->
     <dimen name="film_scrollview_bottom_padding">16dp</dimen>
     <dimen name="film_backdrop_portrait_height">200dp</dimen>
-    <dimen name="film_backdrop_landscape_height">150dp</dimen>
+    <dimen name="film_backdrop_landscape_height">140dp</dimen>
+    <dimen name="film_data_fragment_vertical_margin">8dp</dimen>
     <dimen name="film_title_vertical_margin">8dp</dimen>
     <dimen name="film_title_horizontal_margin">8dp</dimen>
     <dimen name="film_section_divider_height">1dp</dimen>

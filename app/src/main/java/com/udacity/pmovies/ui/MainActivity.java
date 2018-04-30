@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Check empty API_KEY
         if (getString(R.string.TMDB_API_KEY).isEmpty()) {
             Toast.makeText(getApplicationContext(),
                     "Please obtain your API KEY first from themoviedb.org",

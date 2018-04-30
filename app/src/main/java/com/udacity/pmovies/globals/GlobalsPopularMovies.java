@@ -9,4 +9,8 @@ public class GlobalsPopularMovies {
 
     public static final int PORTRAIT_VIEW = 1;
     public static final int LANDSCAPE_VIEW = 2;
+
+    public static final String DEFAULT_BASE_URL = "https://image.tmdb.org/t/p/";
+    public static final String DEFAULT_POSTER_WIDTH = "w185";
+    public static final String DEFAULT_BACKDROP_WIDTH = "w780";
 }

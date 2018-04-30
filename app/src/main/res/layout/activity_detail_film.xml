@@ -12,7 +12,7 @@
         android:orientation="vertical"
         tools:context=".ui.DetailFilmActivity">
 
-        <!-- TODO Improve UX design - Scroll-efects, such as colapsing the backdrop img -->
+        <!-- TODO Improve UX design - Scroll-effects, such as collapsing the backdrop img -->
 
         <ImageView
             android:id="@+id/iv_film_backdrop_detail_view"
@@ -22,126 +22,17 @@
             android:foregroundGravity="center"
             android:scaleType="centerCrop" />
 
-        <TextView
-            android:id="@+id/tv_film_title_detail_view"
+        <fragment
+            android:id="@+id/fr_detail_film_data"
+            android:name="com.udacity.pmovies.ui.DetailFilmActivityDataFragment"
+            tools:context=".ui.DetailFilmActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="@dimen/film_title_horizontal_margin"
-            android:layout_marginLeft="@dimen/film_title_horizontal_margin"
-            android:layout_marginRight="@dimen/film_title_horizontal_margin"
-            android:layout_marginStart="@dimen/film_title_horizontal_margin"
-            android:layout_marginTop="@dimen/film_title_vertical_margin"
-            android:textSize="28sp"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
+            tools:layout="@layout/fragment_detail_film_data"
             app:layout_constraintTop_toBottomOf="@+id/iv_film_backdrop_detail_view" />
-
-        <View
-            android:id="@+id/v_film_section_divider"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/film_section_divider_height"
-            android:layout_marginEnd="@dimen/film_section_divider_horizonzal_margin"
-            android:layout_marginLeft="@dimen/film_section_divider_horizonzal_margin"
-            android:layout_marginRight="@dimen/film_section_divider_horizonzal_margin"
-            android:layout_marginStart="@dimen/film_section_divider_horizonzal_margin"
-            android:layout_marginTop="@dimen/film_section_divider_vertical_margin"
-            android:background="@color/film_poster_border"
-            app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/tv_film_title_detail_view" />
-
-        <TextView
-            android:id="@+id/tv_film_release_date_title_detail_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/film_release_date_horizontal_margin"
-            android:layout_marginStart="@dimen/film_release_date_horizontal_margin"
-            android:fontFamily="sans-serif"
-            android:text="@string/release_date_title"
-            android:textSize="12sp"
-            app:layout_constraintStart_toEndOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintTop_toTopOf="@+id/iv_film_poster_detail_view" />
-
-        <TextView
-            android:id="@+id/tv_film_release_date_value_detail_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/film_release_date_horizontal_margin"
-            android:layout_marginStart="@dimen/film_release_date_horizontal_margin"
-            android:fontFamily="sans-serif"
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_film_release_date_title_detail_view"
-            app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintStart_toEndOf="@+id/tv_film_release_date_title_detail_view"
-            app:layout_constraintTop_toTopOf="@+id/tv_film_release_date_title_detail_view" />
-
-        <TextView
-            android:id="@+id/tv_film_genres_detail_view"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:fontFamily="sans-serif"
-            android:text="aaaaaaaaaaaaaaaaaa"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/tv_film_release_date_title_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/tv_film_release_date_title_detail_view" />
-
-        <ImageView
-            android:id="@+id/iv_film_poster_detail_view"
-            android:layout_width="@dimen/film_poster_width"
-            android:layout_height="@dimen/film_poster_height"
-            android:layout_marginTop="@dimen/film_poster_vertical_margin"
-            android:background="@drawable/film_poster_background"
-            android:contentDescription="@string/film_poster_content_description"
-            android:foregroundGravity="center"
-            android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/v_film_section_divider" />
-
-        <TextView
-            android:id="@+id/tv_film_overview_detail_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginTop="@dimen/film_overview_vertical_margin"
-            android:fontFamily="sans-serif"
-            android:maxLines="8"
-            android:scrollbars="vertical"
-            android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintEnd_toEndOf="@+id/tv_film_title_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/tv_film_genres_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/tv_film_genres_detail_view" />
-
-        <ImageView
-            android:id="@+id/iv_film_rating_icon_detail_view"
-            android:layout_width="@dimen/film_rating_icon_width"
-            android:layout_height="@dimen/film_rating_icon_height"
-            android:layout_marginTop="@dimen/film_rating_icon_vertical_margin"
-            android:background="@drawable/ic_rating"
-            android:contentDescription="Film poster"
-            android:foregroundGravity="center"
-            android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/iv_film_poster_detail_view" />
-
-        <TextView
-            android:id="@+id/tv_film_rating_detail_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/film_rating_vertical_margin"
-            android:foregroundGravity="center"
-            android:scaleType="centerCrop"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintStart_toStartOf="@+id/iv_film_poster_detail_view"
-            app:layout_constraintTop_toBottomOf="@+id/iv_film_rating_icon_detail_view" />
 
     </android.support.constraint.ConstraintLayout>
 
