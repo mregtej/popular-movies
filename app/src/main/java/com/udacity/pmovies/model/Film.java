@@ -1,15 +1,12 @@
 package com.udacity.pmovies.model;
 
-import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Film Model
@@ -25,7 +22,7 @@ public class Film implements Parcelable {
     @SerializedName("release_date")
     private String releaseDate;
     @SerializedName("genre_ids")
-    private ArrayList<Integer> genreIds = new ArrayList<Integer>();
+    private ArrayList<Integer> genreIds;
     @SerializedName("id")
     private Integer id;
     @SerializedName("original_title")
@@ -48,20 +45,20 @@ public class Film implements Parcelable {
     /**
      * Constructor initialized from JSON parser
      *
-     * @param posterPath
-     * @param adult
-     * @param overview
-     * @param releaseDate
-     * @param genreIds
-     * @param id
-     * @param originalTitle
-     * @param originalLanguage
-     * @param title
-     * @param backdropPath
-     * @param popularity
-     * @param voteCount
-     * @param video
-     * @param voteAverage
+     * @param posterPath        Path of film poster
+     * @param adult             Film adult (pornography) category
+     * @param overview          Film overview
+     * @param releaseDate       Film release date
+     * @param genreIds          Film genres
+     * @param id                Unique film ID (DB)
+     * @param originalTitle     Original film title
+     * @param originalLanguage  Original film language
+     * @param title             Film title (EN)
+     * @param backdropPath      Path of film backdrop-image
+     * @param popularity        Film popularity
+     * @param voteCount         Number of film comments / ratings
+     * @param video             Film video flag
+     * @param voteAverage       Average film rating
      */
     public Film(String posterPath, boolean adult, String overview, String releaseDate,
                 ArrayList<Integer> genreIds, Integer id, String originalTitle,
@@ -87,11 +84,11 @@ public class Film implements Parcelable {
     /**
      * Retrieves Film data from Parcel object
      * This method is invoked by the method createFromParcel of object CREATOR
-     * @param in
+     * @param   in      Film parcelable object
      */
     private Film(Parcel in){
         this.posterPath = in.readString();
-        this.adult = in.readInt() == 1 ? true : false;
+        this.adult = in.readInt() == 1;
         this.overview = in.readString();
         this.releaseDate = in.readString();
         int lengthGenreIds = in.readInt();
@@ -105,7 +102,7 @@ public class Film implements Parcelable {
         this.backdropPath = in.readString();
         this.popularity = in.readDouble();
         this.voteCount = in.readInt();
-        this.video = in.readInt() == 1 ? true : false;
+        this.video = in.readInt() == 1;
         this.voteAverage = in.readDouble();
     }
 
@@ -263,16 +260,16 @@ public class Film implements Parcelable {
         Iterator<Integer> iterator = integers.iterator();
         for (int i = 0; i < ret.length; i++)
         {
-            ret[i] = iterator.next().intValue();
+            ret[i] = iterator.next();
         }
         return ret;
     }
 
     private static ArrayList<Integer> convertArrayListOfIntegers(int[] integers)
     {
-        ArrayList<Integer> ret = new ArrayList<Integer>();
-        for (int i = 0; i < integers.length; i++) {
-            ret.add(integers[i]);
+        ArrayList<Integer> ret = new ArrayList<>();
+        for (int i : integers) {
+            ret.add(i);
         }
         return ret;
     }

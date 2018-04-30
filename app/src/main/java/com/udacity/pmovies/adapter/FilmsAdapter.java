@@ -42,20 +42,18 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     /** List of films - Model data ArrayList<Film> */
     private ArrayList<Film> mFilmList;
     /** API Configuration - Model data Images */
-    Images mImages;
+    private final Images mImages;
     /** Activity Context */
     private Context mContext;
 
-    private int mScreenWidth;
-    private int mScreenHeight;
+    private final int mScreenWidth;
 
     /**
      * Empty Constructor for PopularFilms Adapter
      */
     public FilmsAdapter() {
-        mFilmList = new ArrayList<Film>();
+        mFilmList = new ArrayList<>();
         mImages = Images.getInstance();
-        mScreenHeight = getScreenHeight();
         mScreenWidth = getScreenWidth();
     }
 
@@ -102,14 +100,14 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.iv_film_poster) ImageView filmPosterImageView;
         @BindView(R.id.tv_film_title) TextView filmTitleTextView;
-        private View filmLayout;
+        private final View filmLayout;
 
         public ViewHolder(View v) {
             super(v);
             filmLayout = v;
             ButterKnife.bind(this, v);
-            filmPosterImageView = (ImageView) v.findViewById(R.id.iv_film_poster);
-            filmTitleTextView = (TextView) v.findViewById(R.id.tv_film_title);
+            filmPosterImageView = v.findViewById(R.id.iv_film_poster);
+            filmTitleTextView = v.findViewById(R.id.tv_film_title);
 
             // Resize film poster size
             resizeFilmPoster();

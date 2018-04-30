@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class GenresResponse {
 
     @SerializedName("genres")
-    private ArrayList<Genres> genres = new ArrayList<Genres>();
+    private ArrayList<Genres> genres = new ArrayList<>();
 
     private static final GenresResponse INSTANCE = new GenresResponse();
 

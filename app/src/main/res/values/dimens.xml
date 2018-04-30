@@ -21,7 +21,6 @@
     <dimen name="film_section_divider_vertical_margin">8dp</dimen>
     <dimen name="film_release_date_horizontal_margin">16dp</dimen>
     <dimen name="film_poster_vertical_margin">16dp</dimen>
-    <dimen name="film_overview_horizontal_margin">16dp</dimen>
     <dimen name="film_overview_vertical_margin">8dp</dimen>
     <dimen name="film_rating_icon_width">48dp</dimen>
     <dimen name="film_rating_icon_height">48dp</dimen>

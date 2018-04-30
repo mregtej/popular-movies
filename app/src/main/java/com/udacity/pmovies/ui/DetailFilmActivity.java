@@ -17,12 +17,14 @@ import butterknife.ButterKnife;
 
 /**
  * PMovies DetailFilmActivity
+ *
+ * TODO Implement MVP pattern
  */
 public class DetailFilmActivity extends Activity {
 
-    /*********************************************************************************/
-    /*                               Constants                                       */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Constants                                        |
+    //--------------------------------------------------------------------------------|
 
     /** Class name - Log TAG */
     private static final String TAG = DetailFilmActivity.class.getName();
@@ -32,17 +34,17 @@ public class DetailFilmActivity extends Activity {
     private String filmBackDropURL;
 
 
-    /*********************************************************************************/
-    /*                               Params                                          */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Params                                           |
+    //--------------------------------------------------------------------------------|
 
     /** Film backdrop image */
     @BindView(R.id.iv_film_backdrop_detail_view) ImageView mFilmBackDropImageView;
 
 
-    /*********************************************************************************/
-    /*                              Override methods                                 */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Override Methods                                 |
+    //--------------------------------------------------------------------------------|
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,7 +57,7 @@ public class DetailFilmActivity extends Activity {
             updateUI(filmBackDropURL);
         } else {
             // Retrieve film object from Intent.extras
-            Film film = (Film) getIntent().getParcelableExtra("film");
+            Film film = getIntent().getParcelableExtra("film");
             if (film != null) {
                 // Populate UI
                 populateUI(film);
@@ -69,9 +71,9 @@ public class DetailFilmActivity extends Activity {
         outState.putString(BACKDROP_URL_KEY, filmBackDropURL);
     }
 
-    /*********************************************************************************/
-    /*                              UI View methods                                  */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               UI View Methods                                  |
+    //--------------------------------------------------------------------------------|
 
     private void updateUI(String filmBackDropURL) {
         Picasso.with(this)

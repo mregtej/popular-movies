@@ -18,7 +18,7 @@
         android:paddingEnd="@dimen/film_poster_padding"
         android:foregroundGravity="center"
         android:background="@drawable/film_poster_background"
-        android:contentDescription="Film poster" />
+        android:contentDescription="@string/film_poster_content_description" />
 
     <TextView
         android:id="@+id/tv_film_title"

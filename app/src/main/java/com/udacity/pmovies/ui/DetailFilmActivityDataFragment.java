@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -28,12 +27,14 @@ import butterknife.ButterKnife;
 
 /**
  * PMovies DetailFilmActivityDataFragment
+ *
+ * TODO Implement MVP pattern
  */
 public class DetailFilmActivityDataFragment extends Fragment {
 
-    /*********************************************************************************/
-    /*                               Constants                                       */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Constants                                        |
+    //--------------------------------------------------------------------------------|
 
     /** Class name - Log TAG */
     private static final String TAG = DetailFilmActivityDataFragment.class.getName();
@@ -46,9 +47,9 @@ public class DetailFilmActivityDataFragment extends Fragment {
     private static final String GENRES_KEY = "genres";
 
 
-    /*********************************************************************************/
-    /*                               Params                                          */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Params                                           |
+    //--------------------------------------------------------------------------------|
 
     /** DetailFilmActivity context */
     private Context mContext;
@@ -69,9 +70,9 @@ public class DetailFilmActivityDataFragment extends Fragment {
     @BindView(R.id.tv_film_genres_detail_view) TextView mFilmGenresTextView;
 
 
-    /*********************************************************************************/
-    /*                               Constructors                                    */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Constructors                                     |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Empty constructor
@@ -79,9 +80,9 @@ public class DetailFilmActivityDataFragment extends Fragment {
     public DetailFilmActivityDataFragment() { }
 
 
-    /*********************************************************************************/
-    /*                              Override methods                                 */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Override Methods                                 |
+    //--------------------------------------------------------------------------------|
 
     @Nullable
     @Override
@@ -124,9 +125,9 @@ public class DetailFilmActivityDataFragment extends Fragment {
         savedInstanceState.putString(GENRES_KEY, mFilmGenresTextView.getText().toString());
     }
 
-    /*********************************************************************************/
-    /*                              UI View methods                                  */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               UI View Methods                                  |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Populate UI elements of Detailed Film screen with data retrieved
@@ -161,9 +162,10 @@ public class DetailFilmActivityDataFragment extends Fragment {
                 Double.toString(film.getVoteAverage())));
     }
 
-    /*********************************************************************************/
-    /*                              Support methods                                  */
-    /*********************************************************************************/
+
+    //--------------------------------------------------------------------------------|
+    //                               Support Methods                                  |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Retrieve film genres from Genres look-up table (get genre/movie/list - TMDB Request)
@@ -172,7 +174,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
      * @return  Film genres (String)
      */
     private String buildGenresString(@NonNull Film film) {
-        StringBuffer sGenres = new StringBuffer("");
+        StringBuilder sGenres = new StringBuilder("");
         GenresResponse genres = GenresResponse.getInstance();
         if(genres != null) {
             ArrayList<Integer> filmGenres = film.getGenreIds();
@@ -183,7 +185,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
                         if (i == filmGenres.size() - 1) {
                             sGenres.append(genre.getName());
                         } else {
-                            sGenres.append(genre.getName() + ", ");
+                            sGenres.append(genre.getName()).append(", ");
                         }
                         break;
                     }

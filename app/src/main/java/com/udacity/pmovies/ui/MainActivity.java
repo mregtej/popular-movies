@@ -28,31 +28,31 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * PMovies MainActiviy
+ * PMovies MainActivity
  *
  * TODO Implement MVP pattern
  */
 public class MainActivity extends AppCompatActivity {
 
-    /*********************************************************************************/
-    /*                               Constants                                       */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Constants                                        |
+    //--------------------------------------------------------------------------------|
 
     /** Class name - Log TAG */
     private final static String TAG = MainActivity.class.getName();
 
 
-    /*********************************************************************************/
-    /*                               Params                                          */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Params                                           |
+    //--------------------------------------------------------------------------------|
 
     /** TMDB API client */
     private ApiInterface apiService;
 
 
-    /*********************************************************************************/
-    /*                              Override methods                                 */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               Override Methods                                 |
+    //--------------------------------------------------------------------------------|
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
             if (getString(R.string.TMDB_API_KEY).isEmpty()) {
                 displayNoApiKeyAlertDialog();
             } else {
-                // Create TMDB APO client
+                // Create TMDB API client
                 apiService =
                         ApiClient.getClient().create(ApiInterface.class);
                 // Get API Config - Global access (Singleton pattern)
@@ -115,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*********************************************************************************/
-    /*                              UI View methods                                  */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               UI View Methods                                  |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Populate UI elements with data retrieved from TMDB.
@@ -207,9 +207,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    /*********************************************************************************/
-    /*                      TMDB API Requests methods                                */
-    /*********************************************************************************/
+    //--------------------------------------------------------------------------------|
+    //                               TMDB API Request Methods                         |
+    //--------------------------------------------------------------------------------|
 
     /**
      * get /movie/popular
