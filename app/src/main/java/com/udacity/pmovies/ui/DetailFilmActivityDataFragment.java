@@ -168,7 +168,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
     //--------------------------------------------------------------------------------|
 
     /**
-     * Retrieve film genres from Genres look-up table (get genre/movie/list - TMDB Request)
+     * Retrieve film genres from Genres look-up table (get genre/movie/list - TMDB API Request)
      *
      * @param   film Film model object
      * @return  Film genres (String)
