@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -25,13 +26,34 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * PMovies DetailFilmActivityDataFragment
+ */
 public class DetailFilmActivityDataFragment extends Fragment {
+
+    /*********************************************************************************/
+    /*                               Constants                                       */
+    /*********************************************************************************/
 
     /** Class name - Log TAG */
     private static final String TAG = DetailFilmActivityDataFragment.class.getName();
 
+    private static final String TITLE_KEY = "title";
+    private static final String RELEASE_DATE_KEY = "release-date";
+    private static final String POSTER_URL_KEY = "poster-url";
+    private static final String OVERVIEW_KEY = "overview";
+    private static final String RATING_KEY = "rating";
+    private static final String GENRES_KEY = "genres";
+
+
+    /*********************************************************************************/
+    /*                               Params                                          */
+    /*********************************************************************************/
+
     /** DetailFilmActivity context */
     private Context mContext;
+    /** Film Poster URL */
+    private String filmPosterURL;
 
     /** Film title */
     @BindView(R.id.tv_film_title_detail_view) TextView mFilmTitleTextView;
@@ -46,10 +68,20 @@ public class DetailFilmActivityDataFragment extends Fragment {
     /** Film genres */
     @BindView(R.id.tv_film_genres_detail_view) TextView mFilmGenresTextView;
 
+
+    /*********************************************************************************/
+    /*                               Constructors                                    */
+    /*********************************************************************************/
+
     /**
      * Empty constructor
      */
     public DetailFilmActivityDataFragment() { }
+
+
+    /*********************************************************************************/
+    /*                              Override methods                                 */
+    /*********************************************************************************/
 
     @Nullable
     @Override
@@ -61,8 +93,40 @@ public class DetailFilmActivityDataFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         mContext = rootView.getContext();
 
+        if(savedInstanceState != null) {
+            mFilmTitleTextView.setText(savedInstanceState.getString(TITLE_KEY));
+            filmPosterURL = savedInstanceState.getString(POSTER_URL_KEY);
+            Picasso.with(mContext)
+                    .load(filmPosterURL)
+                    .centerCrop()
+                    .fit()
+                    .error(R.drawable.im_image_not_available)
+                    .into(mFilmPosterImageView);
+            mFilmReleaseDateTextView.setText(savedInstanceState.getString(RELEASE_DATE_KEY));
+            mFilmOverviewTextView.setText(savedInstanceState.getString(OVERVIEW_KEY));
+            mFilmOverviewTextView.setMovementMethod(new ScrollingMovementMethod());
+            mFilmRatingTextView.setText(savedInstanceState.getString(RATING_KEY));
+            mFilmGenresTextView.setText(savedInstanceState.getString(GENRES_KEY));
+        }
+
         return rootView;
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString(TITLE_KEY, mFilmTitleTextView.getText().toString());
+        savedInstanceState.putString(RELEASE_DATE_KEY,
+                mFilmReleaseDateTextView.getText().toString());
+        savedInstanceState.putString(POSTER_URL_KEY, filmPosterURL);
+        savedInstanceState.putString(OVERVIEW_KEY, mFilmOverviewTextView.getText().toString());
+        savedInstanceState.putString(RATING_KEY, mFilmRatingTextView.getText().toString());
+        savedInstanceState.putString(GENRES_KEY, mFilmGenresTextView.getText().toString());
+    }
+
+    /*********************************************************************************/
+    /*                              UI View methods                                  */
+    /*********************************************************************************/
 
     /**
      * Populate UI elements of Detailed Film screen with data retrieved
@@ -72,7 +136,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
      */
     public void populateUI(@NonNull Film film) {
         mFilmTitleTextView.setText(film.getTitle());
-        String filmPosterURL =
+        filmPosterURL =
                 GlobalsPopularMovies.DEFAULT_BASE_URL + "/"
                         + GlobalsPopularMovies.DEFAULT_POSTER_WIDTH + "/"
                         + film.getPosterPath();
@@ -96,6 +160,10 @@ public class DetailFilmActivityDataFragment extends Fragment {
         Log.d(TAG, "Film rating " + getString(R.string.film_rating,
                 Double.toString(film.getVoteAverage())));
     }
+
+    /*********************************************************************************/
+    /*                              Support methods                                  */
+    /*********************************************************************************/
 
     /**
      * Retrieve film genres from Genres look-up table (get genre/movie/list - TMDB Request)

@@ -27,11 +27,32 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ * PMovies MainActiviy
+ *
+ * TODO Implement MVP pattern
+ */
 public class MainActivity extends AppCompatActivity {
 
+    /*********************************************************************************/
+    /*                               Constants                                       */
+    /*********************************************************************************/
+
+    /** Class name - Log TAG */
     private final static String TAG = MainActivity.class.getName();
 
+
+    /*********************************************************************************/
+    /*                               Params                                          */
+    /*********************************************************************************/
+
+    /** TMDB API client */
     private ApiInterface apiService;
+
+
+    /*********************************************************************************/
+    /*                              Override methods                                 */
+    /*********************************************************************************/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,76 +68,23 @@ public class MainActivity extends AppCompatActivity {
         if(!ConnectivityHandler.checkConnectivity(this)) {
             displayConnectivityAlertDialog();
         } else {
-
             // Check empty API_KEY
             if (getString(R.string.TMDB_API_KEY).isEmpty()) {
                 displayNoApiKeyAlertDialog();
             } else {
-
+                // Create TMDB APO client
                 apiService =
                         ApiClient.getClient().create(ApiInterface.class);
-
-                // get /configuration
-                // https://developers.themoviedb.org/3/configuration/get-api-configuration
-                Call<APIConfigurationResponse> callConfig =
-                        apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
-                callConfig.enqueue(new Callback<APIConfigurationResponse>() {
-                    @Override
-                    public void onResponse(Call<APIConfigurationResponse> call,
-                                           Response<APIConfigurationResponse> response) {
-                        Images images = Images.getInstance();
-                        images.setImageFields(response.body().getImages());
-                        Log.d(TAG, "TMDB API Config received");
-                    }
-
-                    @Override
-                    public void onFailure(Call<APIConfigurationResponse> call, Throwable t) {
-                        // Log error here since request failed
-                        Log.e(TAG, t.toString());
-                    }
-                });
-
-                // get /genre/movie/list
-                // https://developers.themoviedb.org/3/genres/get-movie-list
-                Call<GenresResponse> callGenres =
-                        apiService.getGenres(getString(R.string.TMDB_API_KEY));
-                callGenres.enqueue(new Callback<GenresResponse>() {
-                    @Override
-                    public void onResponse(Call<GenresResponse> call,
-                                           Response<GenresResponse> response) {
-                        GenresResponse genres = GenresResponse.getInstance();
-                        genres.setGenres(response.body().getGenres());
-                        Log.d(TAG, "TMDB Genres received");
-                    }
-
-                    @Override
-                    public void onFailure(Call<GenresResponse> call, Throwable t) {
-                        // Log error here since request failed
-                        Log.e(TAG, t.toString());
-                    }
-                });
-
-                // TODO Default call. Use OnSharedPreferences to remember http request at initialization
-                // get /movie/popular
-                // https://developers.themoviedb.org/3/movies/get-popular-movies
-                Call<FilmResponse> call = apiService.getMostPopularMovies(
-                        getString(R.string.TMDB_API_KEY));
-                call.enqueue(new Callback<FilmResponse>() {
-                    @Override
-                    public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                        ArrayList<Film> films = response.body().getResults();
-                        Log.d(TAG, "Number of movies received: " + films.size());
-                        populateUI(films);
-                    }
-
-                    @Override
-                    public void onFailure(Call<FilmResponse> call, Throwable t) {
-                        // Log error here since request failed
-                        Log.e(TAG, t.toString());
-                    }
-                });
+                // Get API Config - Global access (Singleton pattern)
+                getAPIConfiguration();
+                // Get Film Genres - Global access (Singleton pattern)
+                getGenres();
+                // Get Most Popular Movies
+                // TODO Default call. Use OnSharedPreferences to remember http request at init
+                getMostPopularMovies();
             }
         }
+
     }
 
     @Override
@@ -132,57 +100,24 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menuSortByMostPopular:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    // get /movie/popular
-                    // https://developers.themoviedb.org/3/movies/get-popular-movies
-                    Call<FilmResponse> call = apiService.getMostPopularMovies(
-                            getString(R.string.TMDB_API_KEY));
-                    call.enqueue(new Callback<FilmResponse>() {
-                        @Override
-                        public void onResponse(Call<FilmResponse> call,
-                                               Response<FilmResponse> response) {
-                            ArrayList<Film> films = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested most popular movies. " +
-                                    "Number of movies received: " + films.size());
-                            populateUI(films);
-                        }
-
-                        @Override
-                        public void onFailure(Call<FilmResponse> call, Throwable t) {
-                            // Log error here since request failed
-                            Log.e(TAG, t.toString());
-                        }
-                    });
+                    getMostPopularMovies();
                 }
                 return true;
             case R.id.menuSortByTopRated:
                 if(!item.isChecked()) {
                     item.setChecked(true);
-                    // get /movie/top_rated
-                    // https://developers.themoviedb.org/3/movies/get-top-rated-movies
-                    Call<FilmResponse> call = apiService.getTopRatedMovies(
-                            getString(R.string.TMDB_API_KEY));
-                    call.enqueue(new Callback<FilmResponse>() {
-                        @Override
-                        public void onResponse(Call<FilmResponse> call,
-                                               Response<FilmResponse> response) {
-                            ArrayList<Film> films = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested top rated movies. " +
-                                    "Number of movies received: " + films.size());
-                            populateUI(films);
-                        }
-
-                        @Override
-                        public void onFailure(Call<FilmResponse> call, Throwable t) {
-                            // Log error here since request failed
-                            Log.e(TAG, t.toString());
-                        }
-                    });
+                    getTopRatedMovies();
                 }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
+    /*********************************************************************************/
+    /*                              UI View methods                                  */
+    /*********************************************************************************/
 
     /**
      * Populate UI elements with data retrieved from TMDB.
@@ -270,4 +205,108 @@ public class MainActivity extends AppCompatActivity {
                 });
         noApiKeyDialog.show();
     }
+
+
+    /*********************************************************************************/
+    /*                      TMDB API Requests methods                                */
+    /*********************************************************************************/
+
+    /**
+     * get /movie/popular
+     * https://developers.themoviedb.org/3/movies/get-popular-movies
+     */
+    private void getMostPopularMovies() {
+        Call<FilmResponse> call = apiService.getMostPopularMovies(
+                getString(R.string.TMDB_API_KEY));
+        call.enqueue(new Callback<FilmResponse>() {
+            @Override
+            public void onResponse(Call<FilmResponse> call,
+                                   Response<FilmResponse> response) {
+                ArrayList<Film> films = response.body().getResults();
+                Log.d(TAG, "TMDB - Requested most popular movies. " +
+                        "Number of movies received: " + films.size());
+                populateUI(films);
+            }
+
+            @Override
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+            }
+        });
+    }
+
+    /**
+     * get /movie/top_rated
+     * https://developers.themoviedb.org/3/movies/get-top-rated-movies
+     */
+    private void getTopRatedMovies() {
+        Call<FilmResponse> call = apiService.getTopRatedMovies(
+                getString(R.string.TMDB_API_KEY));
+        call.enqueue(new Callback<FilmResponse>() {
+            @Override
+            public void onResponse(Call<FilmResponse> call,
+                                   Response<FilmResponse> response) {
+                ArrayList<Film> films = response.body().getResults();
+                Log.d(TAG, "TMDB - Requested top rated movies. " +
+                        "Number of movies received: " + films.size());
+                populateUI(films);
+            }
+
+            @Override
+            public void onFailure(Call<FilmResponse> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+            }
+        });
+    }
+
+    /**
+     * get /configuration
+     * https://developers.themoviedb.org/3/configuration/get-api-configuration
+     */
+    private void getAPIConfiguration() {
+        Call<APIConfigurationResponse> callConfig =
+                apiService.getConfiguration(getString(R.string.TMDB_API_KEY));
+        callConfig.enqueue(new Callback<APIConfigurationResponse>() {
+            @Override
+            public void onResponse(Call<APIConfigurationResponse> call,
+                                   Response<APIConfigurationResponse> response) {
+                Images images = Images.getInstance();
+                images.setImageFields(response.body().getImages());
+                Log.d(TAG, "TMDB API Config received");
+            }
+
+            @Override
+            public void onFailure(Call<APIConfigurationResponse> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+            }
+        });
+    }
+
+    /**
+     * get /genre/movie/list
+     * https://developers.themoviedb.org/3/genres/get-movie-list
+     */
+    private void getGenres() {
+        Call<GenresResponse> callGenres =
+                apiService.getGenres(getString(R.string.TMDB_API_KEY));
+        callGenres.enqueue(new Callback<GenresResponse>() {
+            @Override
+            public void onResponse(Call<GenresResponse> call,
+                                   Response<GenresResponse> response) {
+                GenresResponse genres = GenresResponse.getInstance();
+                genres.setGenres(response.body().getGenres());
+                Log.d(TAG, "TMDB Genres received");
+            }
+
+            @Override
+            public void onFailure(Call<GenresResponse> call, Throwable t) {
+                // Log error here since request failed
+                Log.e(TAG, t.toString());
+            }
+        });
+    }
+
 }
