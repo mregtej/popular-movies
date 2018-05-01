@@ -84,8 +84,9 @@ public class MainActivity extends AppCompatActivity {
                 getMostPopularMovies();
             }
         }
-
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 this.getResources().getString(R.string.network_user_choice_wifi),
                 this.getResources().getString(R.string.network_user_choice_3g),
                 this.getResources().getString(R.string.network_user_choice_no),
-                false
+                true
         );
         connectivityDialog.setButton(DialogInterface.BUTTON_POSITIVE,
                 this.getResources().getString(R.string.network_user_choice_wifi),
@@ -174,6 +175,12 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+        connectivityDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                finish();
+            }
+        });
         connectivityDialog.show();
     }
 
@@ -188,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                 this.getResources().getString(R.string.no_api_key_failure),
                 this.getResources().getString(R.string.no_api_key_user_choice),
                 this.getResources().getString(R.string.no_api_key_open_website),
-                false
+                true
         );
         noApiKeyDialog.setButton(DialogInterface.BUTTON_POSITIVE,
                 this.getResources().getString(R.string.no_api_key_open_website),
@@ -203,6 +210,12 @@ public class MainActivity extends AppCompatActivity {
                         finish();
                     }
                 });
+        noApiKeyDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                finish();
+            }
+        });
         noApiKeyDialog.show();
     }
 
