@@ -7,6 +7,7 @@ import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
@@ -53,6 +55,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
     private static final String OVERVIEW_KEY = "overview";
     private static final String RATING_KEY = "rating";
     private static final String GENRES_KEY = "genres";
+    private static final String ADD_TO_FAVS_KEY = "add-to-favs";
 
 
     //--------------------------------------------------------------------------------|
@@ -63,6 +66,10 @@ public class DetailFilmActivityDataFragment extends Fragment {
     private Context mContext;
     /** Film Poster URL */
     private String filmPosterURL;
+    // TODO Remove after DB integration
+    private static boolean wasFilmAddedToFavs = false;
+    // Add/Remove film to/from favs Toast
+    private Toast mAddToFavsToast;
 
 
     /** Film title */
@@ -77,6 +84,10 @@ public class DetailFilmActivityDataFragment extends Fragment {
     @BindView(R.id.tv_film_rating_detail_view) TextView mFilmRatingTextView;
     /** Film genres */
     @BindView(R.id.tv_film_genres_detail_view) TextView mFilmGenresTextView;
+    /** Film add to favorites button */
+    @BindView(R.id.iv_film_add_to_favorite_icon_detail_view) ImageView mAddFilmToFavsImageView;
+    /** Film add/remove to/from favorites Text */
+    @BindView(R.id.tv_film_add_to_favorite_label_detail_view) TextView mAddRemoveFilmToFromTextView;
 
 
     //--------------------------------------------------------------------------------|
@@ -117,6 +128,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
             mFilmOverviewTextView.setMovementMethod(new ScrollingMovementMethod());
             mFilmRatingTextView.setText(savedInstanceState.getString(RATING_KEY));
             mFilmGenresTextView.setText(savedInstanceState.getString(GENRES_KEY));
+            wasFilmAddedToFavs = savedInstanceState.getBoolean(ADD_TO_FAVS_KEY);
         }
 
         mFilmOverviewTextView.setOnTouchListener(new View.OnTouchListener() {
@@ -147,6 +159,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
         savedInstanceState.putString(OVERVIEW_KEY, mFilmOverviewTextView.getText().toString());
         savedInstanceState.putString(RATING_KEY, mFilmRatingTextView.getText().toString());
         savedInstanceState.putString(GENRES_KEY, mFilmGenresTextView.getText().toString());
+        savedInstanceState.putBoolean(ADD_TO_FAVS_KEY, wasFilmAddedToFavs);
     }
 
 
@@ -160,7 +173,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
      *
      * @param   film    Film model object
      */
-    public void populateUI(@NonNull Film film) {
+    public void populateUI(@NonNull final Film film) {
         mFilmTitleTextView.setText(film.getTitle());
         filmPosterURL =
                 GlobalsPopularMovies.DEFAULT_BASE_URL + "/"
@@ -178,6 +191,22 @@ public class DetailFilmActivityDataFragment extends Fragment {
         mFilmOverviewTextView.setMovementMethod(new ScrollingMovementMethod());
         mFilmRatingTextView.setText(getString(R.string.film_rating,
                 Double.toString(film.getVoteAverage())));
+        // TODO Check if film was previously stored in Favs. For now, local variable
+        mAddFilmToFavsImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (wasFilmAddedToFavs) {
+                    // TODO Implement film deletion from Favs
+                    // Update icon status and string
+                    updateAddToFavsUIViews(false,film.getTitle());
+                } else {
+                    // TODO Implement film insertion to Favs
+                    // Update icon status and string
+                    updateAddToFavsUIViews(true,film.getTitle());
+                }
+                wasFilmAddedToFavs = !wasFilmAddedToFavs;
+            }
+        });
 
         Log.d(TAG, "Film title: " + film.getTitle());
         Log.d(TAG, "Film poster URL: " + filmPosterURL);
@@ -185,6 +214,44 @@ public class DetailFilmActivityDataFragment extends Fragment {
         Log.d(TAG, "Film overview: " + film.getOverview());
         Log.d(TAG, "Film rating " + getString(R.string.film_rating,
                 Double.toString(film.getVoteAverage())));
+        Log.d(TAG, "Film added on favs? " + (wasFilmAddedToFavs ? "TRUE" : "FALSE"));
+    }
+
+    /**
+     * Update UI views depending on if film was added to favs or removed from them.
+     *
+     * @param addedStatus   true: added to favs, false = removed from favs
+     * @param title         Film title
+     */
+    private void updateAddToFavsUIViews(boolean addedStatus, String title) {
+        if(addedStatus) {
+            mAddFilmToFavsImageView.setBackground(
+                    ContextCompat.getDrawable(mContext, R.drawable.ic_rating));
+            mAddRemoveFilmToFromTextView.setText(
+                    getString(R.string.remove_from_favorites_title));
+            if(mAddToFavsToast != null) {
+                mAddToFavsToast.cancel();
+            }
+            mAddToFavsToast = Toast.makeText(
+                    mContext,
+                    getString(R.string.add_to_favorites_toast, title),
+                    Toast.LENGTH_SHORT);
+            Log.d(TAG, getString(R.string.add_to_favorites_toast,title));
+        } else {
+            mAddFilmToFavsImageView.setBackground(
+                    ContextCompat.getDrawable(mContext, R.drawable.ic_add_to_favs));
+            mAddRemoveFilmToFromTextView.setText(
+                    getString(R.string.add_to_favorites_title));
+            if(mAddToFavsToast != null) {
+                mAddToFavsToast.cancel();
+            }
+            mAddToFavsToast = Toast.makeText(
+                    mContext,
+                    getString(R.string.remove_from_favorites_toast, title),
+                    Toast.LENGTH_SHORT);
+            Log.d(TAG, getString(R.string.remove_from_favorites_toast,title));
+        }
+        mAddToFavsToast.show();
     }
 
 

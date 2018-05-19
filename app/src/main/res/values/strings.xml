@@ -12,8 +12,10 @@
     <string name="no_film_title">Untitled</string>
     <string name="no_film_categories">Uncategorized</string>
     <string name="release_date_title">Release date: </string>
-    <string name="add_to_favorites_title">Add to Favorites</string>
-    <string name="remove_from_favorites_title">Remove from Favorites</string>
+    <string name="add_to_favorites_title">Add to Favs</string>
+    <string name="remove_from_favorites_title">Remove from Favs</string>
+    <string name="add_to_favorites_toast">%1$s was added to favs.</string>
+    <string name="remove_from_favorites_toast">%1$s was removed from favs.</string>
     <string name="trailers_title">Trailers</string>
     <string name="reviews_title">Reviews</string>
     <string name="unknown_review_author">Unkwnown</string>
@@ -24,6 +26,7 @@
     <string name="film_backdrop_content_description">Film backdrop</string>
     <string name="film_review_author_content_description">Author review</string>
     <string name="film_review_content_content_description">Content review</string>
+    <string name="film_add_to_favs_content_description">Add film to favs button</string>
 
     <!-- Connectivity AlertDialog (Wifi/3G) strings -->
     <string name="network_failure">Network connection failure</string>

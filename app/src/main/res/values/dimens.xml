@@ -39,11 +39,11 @@
     <dimen name="film_review_author_horizontal_margin">8dp</dimen>
     <dimen name="film_review_content_horizontal_margin">8dp</dimen>
     <dimen name="film_review_content_vertical_margin">6dp</dimen>
-    <dimen name="film_review_author_icon_height">48dp</dimen>
-    <dimen name="film_review_author_icon_width">48dp</dimen>
-    <dimen name="film_review_content_icon_height">48dp</dimen>
+    <dimen name="film_review_author_icon_height">36dp</dimen>
+    <dimen name="film_review_author_icon_width">36dp</dimen>
     <dimen name="film_review_author_icon_horizontal_margin">8dp</dimen>
-    <dimen name="film_review_content_icon_width">48dp</dimen>
+    <dimen name="film_review_content_icon_height">36dp</dimen>
+    <dimen name="film_review_content_icon_width">36dp</dimen>
     <dimen name="film_review_content_icon_vertical_margin">8dp</dimen>
 
 </resources>
