@@ -3,22 +3,30 @@ package com.udacity.pmovies.ui;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
+import com.udacity.pmovies.adapter.TrailerAdapter;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.model.Film;
 import com.udacity.pmovies.model.Genres;
 import com.udacity.pmovies.model.GenresResponse;
+import com.udacity.pmovies.model.Video;
 
 import java.util.ArrayList;
 
@@ -55,6 +63,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
     private Context mContext;
     /** Film Poster URL */
     private String filmPosterURL;
+
 
     /** Film title */
     @BindView(R.id.tv_film_title_detail_view) TextView mFilmTitleTextView;
@@ -110,6 +119,21 @@ public class DetailFilmActivityDataFragment extends Fragment {
             mFilmGenresTextView.setText(savedInstanceState.getString(GENRES_KEY));
         }
 
+        mFilmOverviewTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mFilmOverviewTextView.getParent().requestDisallowInterceptTouchEvent(true);
+                return false;
+            }
+        });
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                mFilmOverviewTextView.getParent().requestDisallowInterceptTouchEvent(false);
+                return false;
+            }
+        });
+
         return rootView;
     }
 
@@ -124,6 +148,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
         savedInstanceState.putString(RATING_KEY, mFilmRatingTextView.getText().toString());
         savedInstanceState.putString(GENRES_KEY, mFilmGenresTextView.getText().toString());
     }
+
 
     //--------------------------------------------------------------------------------|
     //                               UI View Methods                                  |

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="top|center_horizontal"
+    android:background="@drawable/film_selector"
+    android:padding="@dimen/film_gridview_padding" >
+
+    <ImageView
+        android:id="@+id/iv_film_trailer"
+        android:layout_width="@dimen/film_trailer_width"
+        android:layout_height="@dimen/film_trailer_height"
+        android:scaleType="centerCrop"
+        android:foregroundGravity="center"
+        android:background="@drawable/film_poster_background"
+        android:contentDescription="@string/film_poster_content_description" />
+
+    <TextView
+        android:id="@+id/tv_film_trailer_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:fontFamily="sans-serif"
+        android:background="@drawable/film_title_background"
+        android:textSize="14sp"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:text="@string/no_film_title"
+        android:lines="2" />
+
+</LinearLayout>

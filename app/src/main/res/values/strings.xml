@@ -9,6 +9,21 @@
 
     <!--DetailFilmActivity strings -->
     <string name="film_rating">%s/10</string>
+    <string name="no_film_title">Untitled</string>
+    <string name="no_film_categories">Uncategorized</string>
+    <string name="release_date_title">Release date: </string>
+    <string name="add_to_favorites_title">Add to Favorites</string>
+    <string name="remove_from_favorites_title">Remove from Favorites</string>
+    <string name="trailers_title">Trailers</string>
+    <string name="reviews_title">Reviews</string>
+    <string name="unknown_review_author">Unkwnown</string>
+    <string name="no_review_content">Empty</string>
+
+    <!-- Content descriptions (ImageViews) -->
+    <string name="film_poster_content_description">Film poster</string>
+    <string name="film_backdrop_content_description">Film backdrop</string>
+    <string name="film_review_author_content_description">Author review</string>
+    <string name="film_review_content_content_description">Content review</string>
 
     <!-- Connectivity AlertDialog (Wifi/3G) strings -->
     <string name="network_failure">Network connection failure</string>
@@ -24,14 +39,5 @@
         In case you have already a valid API KEY, please read README.txt.
         Otherwise, please obtain your API KEY first from www.themoviedb.org</string>
     <string name="no_api_key_open_website">Open TMDB API FAQ</string>
-
-    <!-- Titles, default texts and hints (TextViews) -->
-    <string name="no_film_title">Untitled</string>
-    <string name="no_film_categories">Uncategorized</string>
-    <string name="release_date_title">Release date: </string>
-
-    <!-- Content descriptions (ImageViews) -->
-    <string name="film_poster_content_description">Film poster</string>
-    <string name="film_backdrop_content_description">Film backdrop</string>
 
 </resources>

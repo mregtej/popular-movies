@@ -3,6 +3,8 @@ package com.udacity.pmovies.rest;
 import com.udacity.pmovies.model.APIConfigurationResponse;
 import com.udacity.pmovies.model.FilmResponse;
 import com.udacity.pmovies.model.GenresResponse;
+import com.udacity.pmovies.model.ReviewsResponse;
+import com.udacity.pmovies.model.VideosResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -24,4 +26,10 @@ public interface ApiInterface {
 
     @GET("movie/{id}")
     Call<FilmResponse> getMovieDetails(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}/videos")
+    Call<VideosResponse> getMovieTrailers(@Path("id") int id, @Query("api_key") String apiKey);
+
+    @GET("movie/{id}/reviews")
+    Call<ReviewsResponse> getMovieReviews(@Path("id") int id, @Query("api_key") String apiKey);
 }

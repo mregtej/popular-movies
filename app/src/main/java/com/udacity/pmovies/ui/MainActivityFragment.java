@@ -1,6 +1,8 @@
 package com.udacity.pmovies.ui;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -25,7 +27,7 @@ import butterknife.ButterKnife;
  *
  * TODO Implement MVP pattern
  */
-public class MainActivityFragment extends Fragment {
+public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFilmItemClickListener {
 
     //--------------------------------------------------------------------------------|
     //                               Constants                                        |
@@ -42,11 +44,13 @@ public class MainActivityFragment extends Fragment {
     //--------------------------------------------------------------------------------|
 
     /** Popular films Custom ArrayAdapter */
-    private FilmsAdapter popularFilmAdapter;
+    private FilmsAdapter mFilmAdapter;
     /** RecyclerView LayoutManager instance */
     private RecyclerView.LayoutManager layoutManager;
     /** Custom GridView (RecyclerView) */
     @BindView(R.id.rv_films_grid) RecyclerView recyclerView;
+    /** Activity Context */
+    private Context mContext;
     /** List state */
     private Parcelable mListState;
 
@@ -73,12 +77,13 @@ public class MainActivityFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
         recyclerView.setHasFixedSize(true);
+        mContext = rootView.getContext();
 
         // Load & set GridLayout
         setRecyclerViewLayoutManager(rootView);
 
         // Load & set ArrayAdapter
-        popularFilmAdapter = new FilmsAdapter();
+        mFilmAdapter = new FilmsAdapter(this);
 
         return rootView;
     }
@@ -119,9 +124,9 @@ public class MainActivityFragment extends Fragment {
      * @param   popularFilms    List of films retrieved from TMDB
      */
     public void updateAdapter(ArrayList<Film> popularFilms) {
-        popularFilmAdapter.setFilmList(popularFilms);
-        recyclerView.setAdapter(popularFilmAdapter);
-        popularFilmAdapter.notifyDataSetChanged();
+        mFilmAdapter.setFilmList(popularFilms);
+        recyclerView.setAdapter(mFilmAdapter);
+        mFilmAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -147,4 +152,10 @@ public class MainActivityFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
     }
 
+    @Override
+    public void onItemClick(int position) {
+        Intent i = new Intent(mContext, DetailFilmActivity.class);
+        i.putExtra("film", mFilmAdapter.getFilm(position));
+        this.startActivity(i);
+    }
 }

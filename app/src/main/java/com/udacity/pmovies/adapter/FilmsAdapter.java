@@ -1,7 +1,6 @@
 package com.udacity.pmovies.adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.model.Film;
 import com.udacity.pmovies.model.Images;
-import com.udacity.pmovies.ui.DetailFilmActivity;
 
 import java.util.ArrayList;
 
@@ -30,32 +28,67 @@ import butterknife.ButterKnife;
  */
 public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> {
 
+    //--------------------------------------------------------------------------------|
+    //                               Constants                                        |
+    //--------------------------------------------------------------------------------|
+
     /** Log TAG - Class Name */
     private static final String TAG = FilmsAdapter.class.getSimpleName();
 
     /** Aspect Ratio of Film poster (PosterWidth / PosterHeight) */
     private static final double FILM_POSTER_ASPECT_RATIO = 0.6537;
-
+    /** Default TMDB base URL for displaying DB images */
     private static final String DEFAULT_BASE_URL = "https://image.tmdb.org/t/p/";
+    /** Default TMDB film poster width */
     private static final String DEFAULT_POSTER_WIDTH = "w185";
+
+
+    //--------------------------------------------------------------------------------|
+    //                               Params                                           |
+    //--------------------------------------------------------------------------------|
 
     /** List of films - Model data ArrayList<Film> */
     private ArrayList<Film> mFilmList;
+    /** Film listener */
+    private OnFilmItemClickListener mFilmListener;
     /** API Configuration - Model data Images */
     private final Images mImages;
     /** Activity Context */
     private Context mContext;
-
+    /**ScreenWidth (in px) - Runtime resize of GridView elements */
     private final int mScreenWidth;
+
+
+    //--------------------------------------------------------------------------------|
+    //                               Constructors                                     |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Empty Constructor for PopularFilms Adapter
      */
     public FilmsAdapter() {
         mFilmList = new ArrayList<>();
+        mFilmListener = null;
         mImages = Images.getInstance();
         mScreenWidth = getScreenWidth();
     }
+
+    /**
+     * Constructor which sets the film click-listener (comm with MainActivityFragment)
+     *
+     * @param listener  film click-listener
+     */
+    public FilmsAdapter(OnFilmItemClickListener listener) {
+        mFilmList = new ArrayList<>();
+        mFilmListener = listener;
+        mImages = Images.getInstance();
+        mScreenWidth = getScreenWidth();
+    }
+
+
+    //--------------------------------------------------------------------------------|
+    //                               Getters/Setters                                  |
+    //--------------------------------------------------------------------------------|
 
     /**
      * Set new data for populating the Adapter from JSON results
@@ -66,12 +99,34 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
         this.mFilmList = FilmList;
     }
 
+    /**
+     * Set new Film click-listener
+     *
+     * @param mFilmListener Film click-listener
+     */
+    public void setmFilmListener(OnFilmItemClickListener mFilmListener) {
+        this.mFilmListener = mFilmListener;
+    }
+
+    /**
+     * Get a Film
+     *
+     * @param   position    Film position in GridView
+     * @return  Film        Film parcelable object
+     */
+    public Film getFilm(int position) { return mFilmList.get(position); }
+
+
+    //--------------------------------------------------------------------------------|
+    //                               Override Methods                                 |
+    //--------------------------------------------------------------------------------|
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         mContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        View view = inflater.inflate(R.layout.film_item_layout, parent,false);
+        View view = inflater.inflate(R.layout.item_film_layout, parent,false);
         return new ViewHolder(view);
     }
 
@@ -93,9 +148,12 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() {
-        return mFilmList.size();
-    }
+    public int getItemCount() { return mFilmList.size(); }
+
+
+    //--------------------------------------------------------------------------------|
+    //                               ViewHolder                                       |
+    //--------------------------------------------------------------------------------|
 
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.iv_film_poster) ImageView filmPosterImageView;
@@ -137,18 +195,45 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
         }
     }
 
+
+    //--------------------------------------------------------------------------------|
+    //                          Adapter Support Methods                               |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Add a Film into an specific position on ArrayList<Film>
+     *
+     * @param position  Film position
+     * @param item      Film item
+     */
     public void add(int position, Film item) {
         mFilmList.add(position, item);
         Log.d(TAG, "New film inserted in position: " + position);
         notifyItemInserted(position);
     }
 
+    /**
+     * Remove a Film from an specific position on ArrayList<Film>
+     *
+     * @param position  Film position
+     */
     public void remove(int position) {
         mFilmList.remove(position);
         Log.d(TAG, "Film inserted from position: " + position);
         notifyItemRemoved(position);
     }
 
+
+    //--------------------------------------------------------------------------------|
+    //                                UI Methods                                      |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Populate UI view elements
+     *
+     * @param holder    ViewHolder (View container)
+     * @param film      Film parcelable object
+     */
     private void populateUIView(ViewHolder holder, Film film) {
         // Set poster image
         // Build poster path:
@@ -177,18 +262,6 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
         holder.filmTitleTextView.setText(film.getTitle());
     }
 
-    private void setOnClickListenerView(final ViewHolder holder) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = (int) v.getTag();
-                Intent i = new Intent(mContext, DetailFilmActivity.class);
-                i.putExtra("film", mFilmList.get(position));
-                mContext.startActivity(i);
-            }
-        });
-    }
-
     private static int getScreenWidth() {
         return Resources.getSystem().getDisplayMetrics().widthPixels;
     }
@@ -196,4 +269,37 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     private static int getScreenHeight() {
         return Resources.getSystem().getDisplayMetrics().heightPixels;
     }
+
+    //--------------------------------------------------------------------------------|
+    //                              Support Methods                                   |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Set a film click-listener on the film-view
+     *
+     * @param    holder    ViewHolder (View container)
+     */
+    private void setOnClickListenerView(final ViewHolder holder) {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mFilmListener != null) {
+                    mFilmListener.onItemClick((int)v.getTag());
+                }
+            }
+        });
+    }
+
+
+    //--------------------------------------------------------------------------------|
+    //                           Fragment Comm Interfaces                             |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Interface for handling the film-click
+     */
+    public interface OnFilmItemClickListener {
+        void onItemClick(int position);
+    }
+
 }

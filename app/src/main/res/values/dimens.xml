@@ -18,7 +18,7 @@
     <dimen name="film_title_horizontal_margin">8dp</dimen>
     <dimen name="film_section_divider_height">1dp</dimen>
     <dimen name="film_section_divider_horizonzal_margin">8dp</dimen>
-    <dimen name="film_section_divider_vertical_margin">8dp</dimen>
+    <dimen name="film_section_divider_vertical_margin">10dp</dimen>
     <dimen name="film_release_date_horizontal_margin">16dp</dimen>
     <dimen name="film_poster_vertical_margin">16dp</dimen>
     <dimen name="film_overview_vertical_margin">8dp</dimen>
@@ -26,5 +26,10 @@
     <dimen name="film_rating_icon_height">48dp</dimen>
     <dimen name="film_rating_icon_vertical_margin">8dp</dimen>
     <dimen name="film_rating_vertical_margin">6dp</dimen>
+    <dimen name="film_trailer_width">142dp</dimen>
+    <dimen name="film_trailer_height">80dp</dimen>
+    <dimen name="film_review_author_horizontal_margin">8dp</dimen>
+    <dimen name="film_review_content_horizontal_margin">8dp</dimen>
+    <dimen name="film_review_content_vertical_margin">6dp</dimen>
 
 </resources>
