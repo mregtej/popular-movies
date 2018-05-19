@@ -1,4 +1,4 @@
-package com.udacity.pmovies.adapter;
+package com.udacity.pmovies.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.model.Review;
+import com.udacity.pmovies.tmdb_model.Review;
 
 import java.util.ArrayList;
 

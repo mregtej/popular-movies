@@ -1,10 +1,10 @@
 package com.udacity.pmovies.rest;
 
-import com.udacity.pmovies.model.APIConfigurationResponse;
-import com.udacity.pmovies.model.FilmResponse;
-import com.udacity.pmovies.model.GenresResponse;
-import com.udacity.pmovies.model.ReviewsResponse;
-import com.udacity.pmovies.model.VideosResponse;
+import com.udacity.pmovies.tmdb_model.APIConfigurationResponse;
+import com.udacity.pmovies.tmdb_model.FilmResponse;
+import com.udacity.pmovies.tmdb_model.GenresResponse;
+import com.udacity.pmovies.tmdb_model.ReviewsResponse;
+import com.udacity.pmovies.tmdb_model.VideosResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

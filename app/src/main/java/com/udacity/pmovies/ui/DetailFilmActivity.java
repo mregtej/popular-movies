@@ -1,24 +1,29 @@
 package com.udacity.pmovies.ui;
 
-import android.app.Activity;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
+import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
-import com.udacity.pmovies.model.Film;
-import com.udacity.pmovies.model.Review;
-import com.udacity.pmovies.model.ReviewsResponse;
-import com.udacity.pmovies.model.Video;
-import com.udacity.pmovies.model.VideosResponse;
+import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.Review;
+import com.udacity.pmovies.tmdb_model.ReviewsResponse;
+import com.udacity.pmovies.tmdb_model.Video;
+import com.udacity.pmovies.tmdb_model.VideosResponse;
 import com.udacity.pmovies.rest.ApiClient;
 import com.udacity.pmovies.rest.ApiInterface;
+import com.udacity.pmovies.view_model.FavMoviesViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,7 +36,7 @@ import retrofit2.Response;
  *
  * TODO Implement MVP pattern
  */
-public class DetailFilmActivity extends Activity {
+public class DetailFilmActivity extends FragmentActivity {
 
     //--------------------------------------------------------------------------------|
     //                               Constants                                        |
@@ -53,9 +58,13 @@ public class DetailFilmActivity extends Activity {
     @BindView(R.id.iv_film_backdrop_detail_view) ImageView mFilmBackDropImageView;
     /** TMDB API client */
     private ApiInterface apiService;
-    /** Movie uuid */
+    /** FavMovie uuid */
     private static int movieID;
 
+    /** */
+    private FavMoviesViewModel mFavMoviesViewModel;
+
+    private DetailFilmActivityDataFragment detailFilmActivityDataFragment;
 
     //--------------------------------------------------------------------------------|
     //                               Override Methods                                 |
@@ -69,17 +78,38 @@ public class DetailFilmActivity extends Activity {
 
         if(savedInstanceState != null) {
             filmBackDropURL = savedInstanceState.getString(BACKDROP_URL_KEY);
-            updateUI(filmBackDropURL);
+            updateBackDropImage(filmBackDropURL);
         } else {
             // Retrieve film object from Intent.extras
             Film film = getIntent().getParcelableExtra("film");
             if (film != null) {
-                // Save Movie uuid (other HTTP requests)
+                // Save FavMovie uuid (other HTTP requests)
                 movieID = film.getId();
-                // Populate UI
+                // Populate UI views
                 populateUI(film);
             }
         }
+
+        // Retrieve Favourite movies from DB (LifeData object to be aware about new changes
+        mFavMoviesViewModel = ViewModelProviders.of(this).get(FavMoviesViewModel.class);
+        mFavMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<FavMovie>>() {
+            @Override
+            public void onChanged(@Nullable final List<FavMovie> favMovies) {
+                // Update the cached copy of the words in the adapter.
+                if(detailFilmActivityDataFragment != null) {
+                    detailFilmActivityDataFragment.setFavMovies(favMovies);
+                    detailFilmActivityDataFragment.checkIfFilmWasAddedToFavs();
+                }
+            }
+        });
+
+        // Propagate ViewModel object to Fragment
+        detailFilmActivityDataFragment = (DetailFilmActivityDataFragment)
+                getFragmentManager().findFragmentById(R.id.fr_detail_film_data);
+        if (detailFilmActivityDataFragment != null) {
+            detailFilmActivityDataFragment.setFavMoviesViewModel(mFavMoviesViewModel);
+        }
+
     }
 
     @Override
@@ -90,10 +120,10 @@ public class DetailFilmActivity extends Activity {
         apiService =
                 ApiClient.getClient().create(ApiInterface.class);
 
-        // Get Movie Trailers
+        // Get FavMovie Trailers
         getMovieTrailers();
 
-        // Get Movie Reviews
+        // Get FavMovie Reviews
         getMovieReviews();
 
     }
@@ -108,7 +138,7 @@ public class DetailFilmActivity extends Activity {
     //                               UI View Methods                                  |
     //--------------------------------------------------------------------------------|
 
-    private void updateUI(String filmBackDropURL) {
+    private void updateBackDropImage(String filmBackDropURL) {
         Picasso.with(this)
                 .load(filmBackDropURL)
                 .centerCrop()

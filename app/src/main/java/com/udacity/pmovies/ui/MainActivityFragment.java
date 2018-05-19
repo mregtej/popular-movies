@@ -1,6 +1,8 @@
 package com.udacity.pmovies.ui;
 
 import android.app.Fragment;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,11 +15,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
+import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
-import com.udacity.pmovies.model.Film;
-import com.udacity.pmovies.adapter.FilmsAdapter;
+import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.adapters.FilmsAdapter;
+import com.udacity.pmovies.view_model.FavMoviesViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

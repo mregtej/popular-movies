@@ -1,4 +1,4 @@
-package com.udacity.pmovies.model;
+package com.udacity.pmovies.tmdb_model;
 
 import com.google.gson.annotations.SerializedName;
 

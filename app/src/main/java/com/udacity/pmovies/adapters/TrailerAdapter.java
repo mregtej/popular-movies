@@ -1,4 +1,4 @@
-package com.udacity.pmovies.adapter;
+package com.udacity.pmovies.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
@@ -11,7 +11,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.model.Video;
+import com.udacity.pmovies.tmdb_model.Video;
 
 import java.util.ArrayList;
 

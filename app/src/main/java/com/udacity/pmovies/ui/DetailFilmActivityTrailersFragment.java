@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -16,9 +15,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.adapter.TrailerAdapter;
-import com.udacity.pmovies.model.Film;
-import com.udacity.pmovies.model.Video;
+import com.udacity.pmovies.adapters.TrailerAdapter;
+import com.udacity.pmovies.tmdb_model.Video;
 
 import java.util.ArrayList;
 

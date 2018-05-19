@@ -1,10 +1,13 @@
 package com.udacity.pmovies.ui;
 
 import android.app.AlertDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProvider;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -12,16 +15,19 @@ import android.view.MenuItem;
 
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.comms.ConnectivityHandler;
-import com.udacity.pmovies.model.APIConfigurationResponse;
-import com.udacity.pmovies.model.Film;
-import com.udacity.pmovies.model.FilmResponse;
-import com.udacity.pmovies.model.GenresResponse;
-import com.udacity.pmovies.model.Images;
+import com.udacity.pmovies.database_model.FavMovie;
+import com.udacity.pmovies.tmdb_model.APIConfigurationResponse;
+import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.FilmResponse;
+import com.udacity.pmovies.tmdb_model.GenresResponse;
+import com.udacity.pmovies.tmdb_model.Images;
 import com.udacity.pmovies.rest.ApiClient;
 import com.udacity.pmovies.rest.ApiInterface;
 import com.udacity.pmovies.ui.widgets.AlertDialogHelper;
+import com.udacity.pmovies.view_model.FavMoviesViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;

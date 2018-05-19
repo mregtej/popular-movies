@@ -12,8 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.adapter.ReviewAdapter;
-import com.udacity.pmovies.model.Review;
+import com.udacity.pmovies.adapters.ReviewAdapter;
+import com.udacity.pmovies.tmdb_model.Review;
 
 import java.util.ArrayList;
 

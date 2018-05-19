@@ -1,4 +1,4 @@
-package com.udacity.pmovies.adapter;
+package com.udacity.pmovies.adapters;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -15,8 +15,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
-import com.udacity.pmovies.model.Film;
-import com.udacity.pmovies.model.Images;
+import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.Images;
 
 import java.util.ArrayList;
 
