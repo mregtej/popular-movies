@@ -2,7 +2,7 @@ package com.udacity.pmovies.ui;
 
 import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,8 +21,8 @@ import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.FilmResponse;
 import com.udacity.pmovies.tmdb_model.GenresResponse;
 import com.udacity.pmovies.tmdb_model.Images;
-import com.udacity.pmovies.rest.ApiClient;
-import com.udacity.pmovies.rest.ApiInterface;
+import com.udacity.pmovies.rest.TMDBApiClient;
+import com.udacity.pmovies.rest.TMDBApiInterface;
 import com.udacity.pmovies.ui.widgets.AlertDialogHelper;
 import com.udacity.pmovies.view_model.FavMoviesViewModel;
 
@@ -53,8 +53,11 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------|
 
     /** TMDB API client */
-    private ApiInterface apiService;
-
+    private TMDBApiInterface apiService;
+    /** MainActivityFragment instance */
+    private MainActivityFragment mainActivityFragment;
+    /** FavMovies ViewModel instance */
+    private FavMoviesViewModel mFavMoviesViewModel;
 
     //--------------------------------------------------------------------------------|
     //                               Override Methods                                 |
@@ -64,6 +67,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Cast MainActivityFragment
+        mainActivityFragment = (MainActivityFragment)
+                getFragmentManager().findFragmentById(R.id.fr_main);
+        // Register FavMovies ViewModel (obtains LiveData<List<FavMovies>>)
+        registerFavoriteMoviesViewModel();
     }
 
     @Override
@@ -80,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 // Create TMDB API client
                 apiService =
-                        ApiClient.getClient().create(ApiInterface.class);
+                        TMDBApiClient.getClient().create(TMDBApiInterface.class);
                 // Get API Config - Global access (Singleton pattern)
                 getAPIConfiguration();
                 // Get Film Genres - Global access (Singleton pattern)
@@ -91,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -127,6 +133,24 @@ public class MainActivity extends AppCompatActivity {
     //--------------------------------------------------------------------------------|
 
     /**
+     * Subscribes the activity class for receiving notifications from FavMovies ViewModel, when
+     * the list of favorite movies be updated.
+     */
+    private void registerFavoriteMoviesViewModel() {
+        // Retrieve Favourite movies from DB (LifeData object to be aware about new changes
+        mFavMoviesViewModel = ViewModelProviders.of(this).get(FavMoviesViewModel.class);
+        mFavMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<FavMovie>>() {
+            @Override
+            public void onChanged(@Nullable final List<FavMovie> favMovies) {
+                // Update the cached copy of the words in the adapter.
+                if (mainActivityFragment != null) {
+                    mainActivityFragment.setmFavMovies(favMovies);
+                }
+            }
+        });
+    }
+
+    /**
      * Populate UI elements with data retrieved from TMDB.
      * ArrayList of Films shall be propagated to the Fragment.
      *
@@ -134,8 +158,6 @@ public class MainActivity extends AppCompatActivity {
      */
     private void populateUI(ArrayList<Film> filmList) {
         // Update your UI here based on result of download.
-        MainActivityFragment mainActivityFragment = (MainActivityFragment)
-                getFragmentManager().findFragmentById(R.id.fr_main);
         if (mainActivityFragment != null) {
             mainActivityFragment.updateAdapter(filmList);
         }

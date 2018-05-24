@@ -40,8 +40,12 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
 
     /** Class Name - Log TAG */
     private static final String TAG = MainActivity.class.getName();
-    /** Key for storing the list state */
+    /** Key for storing the list state in savedInstanceState */
     private static final String LIST_STATE_KEY = "list-state";
+    /** Key for retrieving Film parcelable object from intent */
+    private static final String FILM_EXTRA = "film";
+    /** Key for identifying if film is in favorite film list */
+    private static final String IS_IN_FAVS_EXTRA = "is-in-favs";
 
 
     //--------------------------------------------------------------------------------|
@@ -56,8 +60,10 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     @BindView(R.id.rv_films_grid) RecyclerView recyclerView;
     /** Activity Context */
     private Context mContext;
-    /** List state */
+    /** List state stored in savedInstanceState */
     private Parcelable mListState;
+    /** Favorite film list */
+    private List<FavMovie> mFavMovies;
 
 
     //--------------------------------------------------------------------------------|
@@ -120,6 +126,19 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
 
 
     //--------------------------------------------------------------------------------|
+    //                                  Setters                                       |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Set favorite movie list (retrieved via FavMoviesViewModel)
+     *
+     * @param mFavMovies    favorite movie list
+     */
+    public void setmFavMovies(List<FavMovie> mFavMovies) {
+        this.mFavMovies = mFavMovies;
+    }
+
+    //--------------------------------------------------------------------------------|
     //                               UI View Methods                                  |
     //--------------------------------------------------------------------------------|
 
@@ -157,10 +176,40 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         recyclerView.setLayoutManager(layoutManager);
     }
 
+
+    //--------------------------------------------------------------------------------|
+    //                           Adapter --> Fragment comm                            |
+    //--------------------------------------------------------------------------------|
+
     @Override
     public void onItemClick(int position) {
         Intent i = new Intent(mContext, DetailFilmActivity.class);
-        i.putExtra("film", mFilmAdapter.getFilm(position));
+        Film film = mFilmAdapter.getFilm(position);
+        i.putExtra(FILM_EXTRA, film);
+        i.putExtra(IS_IN_FAVS_EXTRA, isFilmInFavs(film.getId()));
         this.startActivity(i);
     }
+
+
+    //--------------------------------------------------------------------------------|
+    //                                Support Methods                                 |
+    //--------------------------------------------------------------------------------|
+
+    /**
+     * Checks if current film is already included in favorite film list.
+     *
+     * @param   film_id     Film ID (uid)
+     * @return  true, if film is in favorite film list; false, otherwise
+     */
+    private boolean isFilmInFavs(int film_id) {
+        if(mFavMovies != null) {
+            for (FavMovie favMovie : mFavMovies) {
+                if (film_id == favMovie.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 }

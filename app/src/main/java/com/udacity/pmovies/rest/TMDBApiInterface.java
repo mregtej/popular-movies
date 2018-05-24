@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
-public interface ApiInterface {
+public interface TMDBApiInterface {
     @GET("configuration")
     Call<APIConfigurationResponse> getConfiguration(@Query("api_key") String apiKey);
 

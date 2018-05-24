@@ -3,7 +3,7 @@ package com.udacity.pmovies.rest;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ApiClient {
+public class TMDBApiClient {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/";
 
