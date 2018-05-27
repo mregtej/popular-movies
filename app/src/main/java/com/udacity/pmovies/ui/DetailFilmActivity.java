@@ -1,5 +1,6 @@
 package com.udacity.pmovies.ui;
 
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,25 +17,19 @@ import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.Review;
-import com.udacity.pmovies.tmdb_model.ReviewsResponse;
 import com.udacity.pmovies.tmdb_model.Video;
-import com.udacity.pmovies.tmdb_model.VideosResponse;
 import com.udacity.pmovies.rest.TMDBApiClient;
 import com.udacity.pmovies.rest.TMDBApiInterface;
-import com.udacity.pmovies.view_model.FavMoviesViewModel;
+import com.udacity.pmovies.view_model.FavoriteMoviesViewModel;
+import com.udacity.pmovies.view_model.TMDBViewModel;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * PMovies DetailFilmActivity
- *
- * TODO Implement MVP pattern
  */
 public class DetailFilmActivity extends FragmentActivity implements
         DetailFilmActivityDataFragment.OnFavoriteFilmItemClickListener {
@@ -61,16 +56,20 @@ public class DetailFilmActivity extends FragmentActivity implements
 
     /** Film Backdrop URL */
     private String filmBackDropURL;
-    /** TMDB API client */
-    private TMDBApiInterface apiService;
     // Add/Remove film to/from favs Toast
     private Toast mAddToFavsToast;
     /** Film object */
     private static Film mFilm;
     /** Flag for identifying if film is in favorite movie list */
     private boolean mIsFilmInFavs;
+
     /** FavMovies ViewModel instance */
-    private FavMoviesViewModel mFavMoviesViewModel;
+    private FavoriteMoviesViewModel mFavoriteMoviesViewModel;
+    /** TMDB ViewModel instance */
+    private TMDBViewModel mTmdbViewModel;
+    /** TMDB API client */
+    private TMDBApiInterface apiService;
+
     /** DetailFilmActivityDataFragment instance */
     private DetailFilmActivityDataFragment detailFilmActivityDataFragment;
     /** DetailFilmActivityReviewsFragment instance */
@@ -113,8 +112,28 @@ public class DetailFilmActivity extends FragmentActivity implements
             }
         }
 
-        // Get instance of FavMoviesViewModes (for inserting/deleting film to/from fav list)
-        mFavMoviesViewModel = ViewModelProviders.of(this).get(FavMoviesViewModel.class);
+        /**************************************************************/
+        /*                 FavoriteMoviesViewModel                    */
+        /**************************************************************/
+        // Create FavoriteMoviesViewModel Factory for param injection
+        FavoriteMoviesViewModel.Factory favMov_factory = new FavoriteMoviesViewModel.Factory(
+                this.getApplication());
+        // Get instance of FavoriteMoviesViewModel
+        mFavoriteMoviesViewModel = ViewModelProviders.of(this, favMov_factory)
+                .get(FavoriteMoviesViewModel.class);
+
+
+        /**************************************************************/
+        /*                        TMDBViewModel                       */
+        /**************************************************************/
+        // Create TMDB API client
+        apiService = TMDBApiClient.getClient().create(TMDBApiInterface.class);
+        // Create TMDBViewModel Factory for param injection
+        TMDBViewModel.Factory tmdb_factory = new TMDBViewModel.Factory(
+                this.getApplication(), apiService, getString(R.string.TMDB_API_KEY));
+        // Get instance of TMDBViewModel
+        mTmdbViewModel = ViewModelProviders.of(this, tmdb_factory)
+                .get(TMDBViewModel.class);
 
     }
 
@@ -127,10 +146,28 @@ public class DetailFilmActivity extends FragmentActivity implements
                 TMDBApiClient.getClient().create(TMDBApiInterface.class);
 
         // Get FavMovie Trailers
-        getMovieTrailers(mFilm.getId());
+        mTmdbViewModel.getMovieTrailers(mFilm.getId()).observe(this, new Observer<List<Video>>() {
+                    @Override
+                    public void onChanged(@Nullable List<Video> trailers) {
+                        if (trailers == null || trailers.isEmpty()) {
+                            return;
+                        } else {
+                            populateUITrailers(trailers);
+                        }
+                    }
+                });
 
         // Get FavMovie Reviews
-        getMovieReviews(mFilm.getId());
+        mTmdbViewModel.getMovieReviews(mFilm.getId()).observe(this, new Observer<List<Review>>() {
+            @Override
+            public void onChanged(@Nullable List<Review> reviews) {
+                if (reviews == null || reviews.isEmpty()) {
+                    return;
+                } else {
+                    populateUIReviews(reviews);
+                }
+            }
+        });
 
     }
 
@@ -150,14 +187,14 @@ public class DetailFilmActivity extends FragmentActivity implements
      */
     private void castUIDetailFilmFragments() {
         detailFilmActivityDataFragment = (DetailFilmActivityDataFragment)
-                getFragmentManager().findFragmentById(R.id.fr_detail_film_data);
+                getSupportFragmentManager().findFragmentById(R.id.fr_detail_film_data);
         if(detailFilmActivityDataFragment != null) {
             detailFilmActivityDataFragment.setmOnFavoriteFilmItemClickListener(this);
         }
         detailFilmActivityReviewsFragment = (DetailFilmActivityReviewsFragment)
-                getFragmentManager().findFragmentById(R.id.fr_detail_film_reviews);
+                getSupportFragmentManager().findFragmentById(R.id.fr_detail_film_reviews);
         detailFilmActivityTrailersFragment = (DetailFilmActivityTrailersFragment)
-                getFragmentManager().findFragmentById(R.id.fr_detail_film_trailers);
+                getSupportFragmentManager().findFragmentById(R.id.fr_detail_film_trailers);
     }
 
     /**
@@ -208,7 +245,7 @@ public class DetailFilmActivity extends FragmentActivity implements
      *
      * @param   trailers    Film Trailers
      */
-    private void populateUITrailers(ArrayList<Video> trailers) {
+    private void populateUITrailers(List<Video> trailers) {
         if(detailFilmActivityTrailersFragment != null) {
             detailFilmActivityTrailersFragment.updateAdapter(trailers);
         }
@@ -219,7 +256,7 @@ public class DetailFilmActivity extends FragmentActivity implements
      *
      * @param   reviews    Film Reviews
      */
-    private void populateUIReviews(ArrayList<Review> reviews) {
+    private void populateUIReviews(List<Review> reviews) {
         if(detailFilmActivityReviewsFragment != null) {
             detailFilmActivityReviewsFragment.updateAdapter(reviews);
         }
@@ -239,61 +276,6 @@ public class DetailFilmActivity extends FragmentActivity implements
 
 
     //--------------------------------------------------------------------------------|
-    //                               TMDB API Request Methods                         |
-    //--------------------------------------------------------------------------------|
-
-    /**
-     * get /movie/{id}/videos
-     * https://developers.themoviedb.org/3/movies/get-movie-videos
-     */
-    private void getMovieTrailers(final int film_id) {
-        Call<VideosResponse> call = apiService.getMovieTrailers(film_id,
-                getString(R.string.TMDB_API_KEY));
-        call.enqueue(new Callback<VideosResponse>() {
-            @Override
-            public void onResponse(Call<VideosResponse> call,
-                                   Response<VideosResponse> response) {
-                ArrayList<Video> trailers = response.body().getResults();
-                Log.d(TAG, "TMDB - Requested trailers for film_id: " + film_id +
-                        ". Number of trailers received: " + trailers.size());
-                populateUITrailers(trailers);
-            }
-
-            @Override
-            public void onFailure(Call<VideosResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
-            }
-        });
-    }
-
-    /**
-     * get /movie/{id}/reviews
-     * https://developers.themoviedb.org/3/movies/get-movie-reviews
-     */
-    private void getMovieReviews(final int film_id) {
-        Call<ReviewsResponse> call = apiService.getMovieReviews(film_id,
-                getString(R.string.TMDB_API_KEY));
-        call.enqueue(new Callback<ReviewsResponse>() {
-            @Override
-            public void onResponse(Call<ReviewsResponse> call,
-                                   Response<ReviewsResponse> response) {
-                ArrayList<Review> reviews = response.body().getResults();
-                Log.d(TAG, "TMDB - Requested reviews for film_id: " + film_id +
-                        ". Number of reviews received: " + reviews.size());
-                populateUIReviews(reviews);
-            }
-
-            @Override
-            public void onFailure(Call<ReviewsResponse> call, Throwable t) {
-                // Log error here since request failed
-                Log.e(TAG, t.toString());
-            }
-        });
-    }
-
-
-    //--------------------------------------------------------------------------------|
     //                         Fragment --> Activity Comms.                           |
     //--------------------------------------------------------------------------------|
 
@@ -301,7 +283,7 @@ public class DetailFilmActivity extends FragmentActivity implements
     public void onItemClick() {
         if(mIsFilmInFavs) {
             // TODO Use Repository pattern and re-use film object
-            mFavMoviesViewModel.delete(
+            mFavoriteMoviesViewModel.delete(
                     new FavMovie(
                             mFilm.getId(),
                             mFilm.getTitle(),
@@ -319,7 +301,7 @@ public class DetailFilmActivity extends FragmentActivity implements
             displayToast(getString(R.string.remove_from_favorites_toast, mFilm.getTitle()));
         } else {
             // TODO Use Repository pattern and re-use film object
-            mFavMoviesViewModel.insert(
+            mFavoriteMoviesViewModel.insert(
                     new FavMovie(
                             mFilm.getId(),
                             mFilm.getTitle(),

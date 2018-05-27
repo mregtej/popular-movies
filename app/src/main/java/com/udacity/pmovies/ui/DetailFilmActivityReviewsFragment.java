@@ -1,10 +1,10 @@
 package com.udacity.pmovies.ui;
 
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,7 +15,7 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.adapters.ReviewAdapter;
 import com.udacity.pmovies.tmdb_model.Review;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -55,7 +55,8 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
+                             Bundle savedInstanceState) {
         // Inflate Views
         View rootView = inflater.inflate(R.layout.fragment_detail_film_reviews,
                 container, false);
@@ -116,7 +117,7 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
      *
      * @param   filmReviews    List of film-reviews retrieved from TMDB
      */
-    public void updateAdapter(ArrayList<Review> filmReviews) {
+    public void updateAdapter(List<Review> filmReviews) {
         mReviewAdapter.setmReviewList(filmReviews);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
         mReviewAdapter.notifyDataSetChanged();

@@ -1,6 +1,5 @@
 package com.udacity.pmovies.ui;
 
-import android.app.Fragment;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,7 +18,7 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.adapters.TrailerAdapter;
 import com.udacity.pmovies.tmdb_model.Video;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -123,7 +123,7 @@ public class DetailFilmActivityTrailersFragment extends Fragment
      *
      * @param   filmTrailers    List of film-trailers retrieved from TMDB
      */
-    public void updateAdapter(ArrayList<Video> filmTrailers) {
+    public void updateAdapter(List<Video> filmTrailers) {
         mTrailerAdapter.setmTrailerList(filmTrailers);
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
         mTrailerAdapter.notifyDataSetChanged();

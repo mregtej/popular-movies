@@ -10,10 +10,13 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 @Dao
-public interface FavMoviesDao {
+public interface FavoriteMoviesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insert(FavMovie favMovie);
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<FavMovie> products);
 
     @Delete
     void delete(FavMovie favMovie);
@@ -22,5 +25,5 @@ public interface FavMoviesDao {
     void deleteAll();
 
     @Query("SELECT * from FAV_MOVIES_TABLE ORDER BY id ASC")
-    LiveData<List<FavMovie>> getAllFavMovies();
+    LiveData<List<FavMovie>> getFavoriteMovies();
 }

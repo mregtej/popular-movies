@@ -1,11 +1,12 @@
 package com.udacity.pmovies.ui;
 
-import android.app.Fragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
@@ -19,9 +20,13 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
+import com.udacity.pmovies.rest.TMDBApiClient;
+import com.udacity.pmovies.rest.TMDBApiInterface;
 import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.Genres;
 import com.udacity.pmovies.tmdb_model.GenresResponse;
+import com.udacity.pmovies.view_model.FavoriteMoviesViewModel;
+import com.udacity.pmovies.view_model.TMDBViewModel;
 
 import java.util.ArrayList;
 
@@ -30,8 +35,6 @@ import butterknife.ButterKnife;
 
 /**
  * PMovies DetailFilmActivityDataFragment
- *
- * TODO Implement MVP pattern
  */
 public class DetailFilmActivityDataFragment extends Fragment {
 
@@ -63,6 +66,13 @@ public class DetailFilmActivityDataFragment extends Fragment {
     private OnFavoriteFilmItemClickListener mOnFavoriteFilmItemClickListener;
     /** Flag for identifying if film is in favorites movie list */
     private boolean isFavFilm;
+
+    /** FavMovies ViewModel instance */
+    private FavoriteMoviesViewModel mFavoriteMoviesViewModel;
+    /** TMDB ViewModel instance */
+    private TMDBViewModel mTmdbViewModel;
+    /** TMDB API client */
+    private TMDBApiInterface apiService;
 
     /** Film title */
     @BindView(R.id.tv_film_title_detail_view) TextView mFilmTitleTextView;
@@ -118,6 +128,33 @@ public class DetailFilmActivityDataFragment extends Fragment {
     //--------------------------------------------------------------------------------|
     //                               Override Methods                                 |
     //--------------------------------------------------------------------------------|
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        /**************************************************************/
+        /*                 FavoriteMoviesViewModel                    */
+        /**************************************************************/
+        // Create FavoriteMoviesViewModel Factory for param injection
+        FavoriteMoviesViewModel.Factory favMov_factory = new FavoriteMoviesViewModel.Factory(
+                getActivity().getApplication());
+        // Get instance of FavoriteMoviesViewModel
+        mFavoriteMoviesViewModel = ViewModelProviders.of(this, favMov_factory)
+                .get(FavoriteMoviesViewModel.class);
+
+        /**************************************************************/
+        /*                        TMDBViewModel                       */
+        /**************************************************************/
+        // Create TMDB API client
+        apiService = TMDBApiClient.getClient().create(TMDBApiInterface.class);
+        // Create TMDBViewModel Factory for param injection
+        TMDBViewModel.Factory tmdb_factory = new TMDBViewModel.Factory(
+                getActivity().getApplication(), apiService, getString(R.string.TMDB_API_KEY));
+        // Get instance of TMDBViewModel
+        mTmdbViewModel = ViewModelProviders.of(this, tmdb_factory)
+                .get(TMDBViewModel.class);
+    }
 
     @Nullable
     @Override

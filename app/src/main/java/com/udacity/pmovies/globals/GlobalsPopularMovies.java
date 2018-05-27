@@ -13,4 +13,9 @@ public class GlobalsPopularMovies {
     public static final String DEFAULT_BASE_URL = "https://image.tmdb.org/t/p/";
     public static final String DEFAULT_POSTER_WIDTH = "w185";
     public static final String DEFAULT_BACKDROP_WIDTH = "w780";
+
+    public static final int MOST_POPULAR_PANEL_VIEW = 0;
+    public static final int TOP_RATED_PANEL_VIEW = 1;
+    public static final int FAVORITE_FILMS_PANEL_VIEW = 2;
+
 }

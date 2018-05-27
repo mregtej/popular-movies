@@ -19,6 +19,7 @@ import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.Images;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,7 +49,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     //--------------------------------------------------------------------------------|
 
     /** List of films - Model data ArrayList<Film> */
-    private ArrayList<Film> mFilmList;
+    private List<Film> mFilmList;
     /** Film listener */
     private OnFilmItemClickListener mFilmListener;
     /** API Configuration - Model data Images */
@@ -95,7 +96,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      *
      * @param FilmList  List of PopularFilm objects to display in a list.
      */
-    public void setFilmList(ArrayList<Film> FilmList) {
+    public void setFilmList(List<Film> FilmList) {
         this.mFilmList = FilmList;
     }
 
