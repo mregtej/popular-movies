@@ -7,23 +7,26 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.udacity.pmovies.tmdb_model.Film;
+
 import java.util.List;
+
 
 @Dao
 public interface FavoriteMoviesDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(FavMovie favMovie);
+    void insert(Film favMovie);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAll(List<FavMovie> products);
+    void insertAll(List<Film> products);
 
     @Delete
-    void delete(FavMovie favMovie);
+    void delete(Film favMovie);
 
     @Query("DELETE FROM FAV_MOVIES_TABLE")
     void deleteAll();
 
     @Query("SELECT * from FAV_MOVIES_TABLE ORDER BY id ASC")
-    LiveData<List<FavMovie>> getFavoriteMovies();
+    LiveData<List<Film>> getFavoriteMovies();
 }

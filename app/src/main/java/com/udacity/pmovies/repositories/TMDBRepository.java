@@ -7,7 +7,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.udacity.pmovies.application.PMoviesExecutors;
-import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.database_model.FavoriteMoviesRoomDatabase;
 import com.udacity.pmovies.rest.TMDBApiInterface;
 import com.udacity.pmovies.tmdb_model.APIConfigurationResponse;
@@ -45,7 +44,7 @@ public class TMDBRepository {
     private TMDBApiInterface mTMDBApiClient;
 
     private final FavoriteMoviesRoomDatabase mFavoriteMoviesDB;
-    private MediatorLiveData<List<FavMovie>> mObservableFavoriteMovies;
+    private MediatorLiveData<List<Film>> mObservableFavoriteMovies;
     private final PMoviesExecutors mExecutors;
 
     //--------------------------------------------------------------------------------|
@@ -92,11 +91,11 @@ public class TMDBRepository {
     //                               Local DB Ops                                     |
     //--------------------------------------------------------------------------------|
 
-    public LiveData<List<FavMovie>> getAllFavMovies() {
+    public LiveData<List<Film>> getAllFavMovies() {
         return mObservableFavoriteMovies;
     }
 
-    public void insert(final FavMovie favMovie) {
+    public void insert(final Film favMovie) {
         mExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -106,7 +105,7 @@ public class TMDBRepository {
 
     }
 
-    public void delete(FavMovie favMovie) {
+    public void delete(final Film favMovie) {
         mExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {

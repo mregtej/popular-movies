@@ -13,7 +13,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.Review;
@@ -283,39 +282,11 @@ public class DetailFilmActivity extends FragmentActivity implements
     public void onItemClick() {
         if(mIsFilmInFavs) {
             // TODO Use Repository pattern and re-use film object
-            mFavoriteMoviesViewModel.delete(
-                    new FavMovie(
-                            mFilm.getId(),
-                            mFilm.getTitle(),
-                            mFilm.getOriginalTitle(),
-                            mFilm.getPosterPath(),
-                            mFilm.isAdult(),
-                            mFilm.getOverview(),
-                            mFilm.getReleaseDate(),
-                            mFilm.getOriginalLanguage(),
-                            mFilm.getBackdropPath(),
-                            mFilm.getPopularity(),
-                            mFilm.getVoteCount(),
-                            mFilm.getVideo(),
-                            mFilm.getVoteAverage()));
+            mFavoriteMoviesViewModel.delete(mFilm);
             displayToast(getString(R.string.remove_from_favorites_toast, mFilm.getTitle()));
         } else {
             // TODO Use Repository pattern and re-use film object
-            mFavoriteMoviesViewModel.insert(
-                    new FavMovie(
-                            mFilm.getId(),
-                            mFilm.getTitle(),
-                            mFilm.getOriginalTitle(),
-                            mFilm.getPosterPath(),
-                            mFilm.isAdult(),
-                            mFilm.getOverview(),
-                            mFilm.getReleaseDate(),
-                            mFilm.getOriginalLanguage(),
-                            mFilm.getBackdropPath(),
-                            mFilm.getPopularity(),
-                            mFilm.getVoteCount(),
-                            mFilm.getVideo(),
-                            mFilm.getVoteAverage()));
+            mFavoriteMoviesViewModel.insert(mFilm);
             displayToast(getString(R.string.add_to_favorites_toast, mFilm.getTitle()));
         }
         mIsFilmInFavs = !mIsFilmInFavs;

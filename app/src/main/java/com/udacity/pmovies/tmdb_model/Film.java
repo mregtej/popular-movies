@@ -1,7 +1,11 @@
 package com.udacity.pmovies.tmdb_model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -11,34 +15,52 @@ import java.util.Iterator;
 /**
  * Film Model
  */
+@Entity(tableName = "fav_movies_table")
 public class Film implements Parcelable {
 
-    @SerializedName("poster_path")
-    private String posterPath;
-    @SerializedName("adult")
-    private boolean adult;
-    @SerializedName("overview")
-    private String overview;
-    @SerializedName("release_date")
-    private String releaseDate;
-    @SerializedName("genre_ids")
-    private ArrayList<Integer> genreIds;
+    @PrimaryKey
+    @NonNull
+    @ColumnInfo(name = "id")
     @SerializedName("id")
     private Integer id;
-    @SerializedName("original_title")
-    private String originalTitle;
-    @SerializedName("original_language")
-    private String originalLanguage;
+    @NonNull
+    @ColumnInfo(name = "title")
     @SerializedName("title")
     private String title;
+    @ColumnInfo(name = "poster_path")
+    @SerializedName("poster_path")
+    private String posterPath;
+    @ColumnInfo(name = "adult")
+    @SerializedName("adult")
+    private boolean adult;
+    @ColumnInfo(name = "overview")
+    @SerializedName("overview")
+    private String overview;
+    @ColumnInfo(name = "release_date")
+    @SerializedName("release_date")
+    private String releaseDate;
+    @ColumnInfo(name = "genre_ids")
+    @SerializedName("genre_ids")
+    private ArrayList<Integer> genreIds;
+    @ColumnInfo(name = "original_title")
+    @SerializedName("original_title")
+    private String originalTitle;
+    @ColumnInfo(name = "original_language")
+    @SerializedName("original_language")
+    private String originalLanguage;
+    @ColumnInfo(name = "backdrop_path")
     @SerializedName("backdrop_path")
     private String backdropPath;
+    @ColumnInfo(name = "popularity")
     @SerializedName("popularity")
     private Double popularity;
+    @ColumnInfo(name = "vote_count")
     @SerializedName("vote_count")
     private Integer voteCount;
+    @ColumnInfo(name = "video")
     @SerializedName("video")
     private Boolean video;
+    @ColumnInfo(name = "vote_average")
     @SerializedName("vote_average")
     private Double voteAverage;
 
@@ -91,10 +113,7 @@ public class Film implements Parcelable {
         this.adult = in.readInt() == 1;
         this.overview = in.readString();
         this.releaseDate = in.readString();
-        int lengthGenreIds = in.readInt();
-        int genreIds[] = new int[lengthGenreIds];
-        in.readIntArray(genreIds);
-        this.genreIds = convertArrayListOfIntegers(genreIds);
+        this.genreIds = in.readArrayList(Integer.class.getClassLoader());
         this.id = in.readInt();
         this.originalTitle = in.readString();
         this.originalLanguage = in.readString();
@@ -129,8 +148,7 @@ public class Film implements Parcelable {
         dest.writeInt(this.adult ? 1 : 0);
         dest.writeString(this.overview);
         dest.writeString(this.releaseDate);
-        dest.writeInt(this.genreIds.size());
-        dest.writeIntArray(convertIntegers(this.genreIds));
+        dest.writeList(this.genreIds);
         dest.writeInt(this.id);
         dest.writeString(this.originalTitle);
         dest.writeString(this.originalLanguage);
@@ -257,10 +275,9 @@ public class Film implements Parcelable {
     private static int[] convertIntegers(ArrayList<Integer> integers)
     {
         int[] ret = new int[integers.size()];
-        Iterator<Integer> iterator = integers.iterator();
         for (int i = 0; i < ret.length; i++)
         {
-            ret[i] = iterator.next();
+            ret[i] = integers.get(i);
         }
         return ret;
     }

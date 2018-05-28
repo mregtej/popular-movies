@@ -9,14 +9,14 @@ import android.arch.lifecycle.ViewModelProvider;
 import android.support.annotation.NonNull;
 
 import com.udacity.pmovies.application.PMoviesApp;
-import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.repositories.TMDBRepository;
+import com.udacity.pmovies.tmdb_model.Film;
 
 import java.util.List;
 
 public class FavoriteMoviesViewModel extends AndroidViewModel {
 
-    private final MediatorLiveData<List<FavMovie>> mObservableFavoriteMovies;
+    private final MediatorLiveData<List<Film>> mObservableFavoriteMovies;
 
     private final TMDBRepository mTmdbRepository;
 
@@ -28,17 +28,17 @@ public class FavoriteMoviesViewModel extends AndroidViewModel {
 
         this.mTmdbRepository = repository;
 
-        LiveData<List<FavMovie>> favMovies = mTmdbRepository.getAllFavMovies();
+        LiveData<List<Film>> favMovies = mTmdbRepository.getAllFavMovies();
 
         // observe the changes of the products from the database and forward them
         mObservableFavoriteMovies.addSource(favMovies, mObservableFavoriteMovies::setValue);
     }
 
-    public LiveData<List<FavMovie>> getAllFavMovies() { return mObservableFavoriteMovies; }
+    public LiveData<List<Film>> getAllFavMovies() { return mObservableFavoriteMovies; }
 
-    public void insert(FavMovie movie) { mTmdbRepository.insert(movie); }
+    public void insert(Film movie) { mTmdbRepository.insert(movie); }
 
-    public void delete(FavMovie movie) { mTmdbRepository.delete(movie); }
+    public void delete(Film movie) { mTmdbRepository.delete(movie); }
 
     /**
      * A creator is used to inject the product ID into the ViewModel

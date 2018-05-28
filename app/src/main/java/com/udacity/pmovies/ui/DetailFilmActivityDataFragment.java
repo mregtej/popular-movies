@@ -298,7 +298,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
         if(genres != null) {
             ArrayList<Integer> filmGenres = film.getGenreIds();
             for (int i = 0; i < filmGenres.size(); i++) {
-                int genreID = filmGenres.get(i);
+                int genreID = Integer.valueOf(filmGenres.get(i));
                 for (Genres genre : genres.getGenres()) {
                     if (genre.getId() == genreID) {
                         if (i == filmGenres.size() - 1) {

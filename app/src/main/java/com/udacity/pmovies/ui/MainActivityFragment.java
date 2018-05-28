@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,7 +20,6 @@ import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.comms.ConnectivityHandler;
-import com.udacity.pmovies.database_model.FavMovie;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.rest.TMDBApiClient;
 import com.udacity.pmovies.rest.TMDBApiInterface;
@@ -83,7 +83,7 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     /**  film list */
     private List<Film> mMostPopularFilms;
     /** Favorite film list */
-    private List<FavMovie> mFavMovies;
+    private List<Film> mFavoriteMovies;
     private int mPanelSelection;
 
     /** FavMovies ViewModel instance */
@@ -122,8 +122,6 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         // Get instance of FavoriteMoviesViewModel
         mFavoriteMoviesViewModel = ViewModelProviders.of(this, favMov_factory)
                     .get(FavoriteMoviesViewModel.class);
-        // Subscribe to FavoriteMoviesViewModel for receiving favorite movie list
-        subscribeToFavoriteMoviesViewModel();
 
         /**************************************************************/
         /*                        TMDBViewModel                       */
@@ -181,6 +179,9 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
                 // Get most popular and top rated movies (LiveData Observer)
                 getMostPopularMovies();
                 getTopRatedMovies();
+                // Subscribe to FavoriteMoviesViewModel for receiving favorite movie list
+                subscribeToFavoriteMoviesViewModel();
+
             }
         }
     }
@@ -215,8 +216,8 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
      *
      * @param mFavMovies    favorite movie list
      */
-    public void setmFavMovies(List<FavMovie> mFavMovies) {
-        this.mFavMovies = mFavMovies;
+    public void setmFavMovies(List<Film> mFavMovies) {
+        this.mFavoriteMovies = mFavMovies;
     }
 
     //--------------------------------------------------------------------------------|
@@ -322,7 +323,8 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
                 mFilmAdapter.setFilmList(mTopRatedFilms);
                 break;
             case GlobalsPopularMovies.FAVORITE_FILMS_PANEL_VIEW:
-                // mFilmAdapter.setFilmList(mFavMovies);
+                // TODO Add custom
+                mFilmAdapter.setFilmList(mFavoriteMovies);
                 break;
         }
         recyclerView.setAdapter(mFilmAdapter);
@@ -372,10 +374,17 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     }
 
     private void subscribeToFavoriteMoviesViewModel() {
-        mFavoriteMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<FavMovie>>() {
+        mFavoriteMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<Film>>() {
             @Override
-            public void onChanged(@Nullable List<FavMovie> favMovies) {
-                mFavMovies = favMovies;
+            public void onChanged(@Nullable List<Film> favMovies) {
+                if (favMovies == null || favMovies.isEmpty()) {
+                    return;
+                } else {
+                    mFavoriteMovies = favMovies;
+                    if(mPanelSelection == GlobalsPopularMovies.FAVORITE_FILMS_PANEL_VIEW) {
+                        updateAdapter(mPanelSelection);
+                    }
+                }
             }
         });
     }
@@ -428,8 +437,10 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     public void onItemClick(int position) {
         Intent i = new Intent(mContext, DetailFilmActivity.class);
         Film film = mFilmAdapter.getFilm(position);
-        i.putExtra(FILM_EXTRA, film);
-        i.putExtra(IS_IN_FAVS_EXTRA, isFilmInFavs(film.getId()));
+        if(film != null) {
+            i.putExtra(FILM_EXTRA, film);
+            i.putExtra(IS_IN_FAVS_EXTRA, isFilmInFavs(film.getId()));
+        }
         this.startActivity(i);
     }
 
@@ -445,8 +456,8 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
      * @return  true, if film is in favorite film list; false, otherwise
      */
     private boolean isFilmInFavs(int film_id) {
-        if(mFavMovies != null) {
-            for (FavMovie favMovie : mFavMovies) {
+        if(mFavoriteMovies != null) {
+            for (Film favMovie : mFavoriteMovies) {
                 if (film_id == favMovie.getId()) {
                     return true;
                 }

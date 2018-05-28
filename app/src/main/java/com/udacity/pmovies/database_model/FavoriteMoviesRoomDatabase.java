@@ -6,14 +6,17 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.udacity.pmovies.application.PMoviesExecutors;
+import com.udacity.pmovies.tmdb_model.Film;
 
 import java.util.List;
 
-@Database(entities = {FavMovie.class}, version = 2, exportSchema = false)
+@Database(entities = {Film.class}, version = 3, exportSchema = false)
+@TypeConverters({FavoriteMoviesConverters.class})
 public abstract class FavoriteMoviesRoomDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "favorite-movies-db";
@@ -77,7 +80,7 @@ public abstract class FavoriteMoviesRoomDatabase extends RoomDatabase {
     }
 
     private static void insertData(final FavoriteMoviesRoomDatabase database,
-                                   final List<FavMovie> favoriteMovies) {
+                                   final List<Film> favoriteMovies) {
         database.runInTransaction(() -> {
             database.favoriteMoviesDao().insertAll(favoriteMovies);
         });

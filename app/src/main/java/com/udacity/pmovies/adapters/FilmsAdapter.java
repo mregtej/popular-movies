@@ -115,7 +115,10 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      * @param   position    Film position in GridView
      * @return  Film        Film parcelable object
      */
-    public Film getFilm(int position) { return mFilmList.get(position); }
+    public Film getFilm(int position) {
+        if(mFilmList != null) { return mFilmList.get(position); }
+        else { return null; }
+    }
 
 
     //--------------------------------------------------------------------------------|
@@ -241,17 +244,19 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
         // base_url + file_size + file_path
         // TODO Choose best poster-size according to device resolution
         String filmPosterURL;
+        /*
         if(mImages != null) {
             filmPosterURL =
                     mImages.getBaseUrl() + "/"
                             + mImages.getPosterSizes().get(2) + "/"
                             + film.getPosterPath();
         } else {
-            filmPosterURL =
+        */
+        filmPosterURL =
                     DEFAULT_BASE_URL + "/"
                             + DEFAULT_POSTER_WIDTH + "/"
                             + film.getPosterPath();
-        }
+        //}
         Picasso
                 .with(mContext)
                 .load(filmPosterURL)
