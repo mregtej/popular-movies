@@ -22,13 +22,14 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.rest.TMDBApiClient;
 import com.udacity.pmovies.rest.TMDBApiInterface;
-import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 import com.udacity.pmovies.tmdb_model.Genres;
 import com.udacity.pmovies.tmdb_model.GenresResponse;
 import com.udacity.pmovies.view_model.FavoriteMoviesViewModel;
 import com.udacity.pmovies.view_model.TMDBViewModel;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -60,7 +61,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
 
     /** DetailFilmActivity context */
     private Context mContext;
-    /** Film Poster URL */
+    /** TMDBFilm Poster URL */
     private String filmPosterURL;
     /** Add/Remove to/from favorite movie list OnClickListener */
     private OnFavoriteFilmItemClickListener mOnFavoriteFilmItemClickListener;
@@ -74,21 +75,21 @@ public class DetailFilmActivityDataFragment extends Fragment {
     /** TMDB API client */
     private TMDBApiInterface apiService;
 
-    /** Film title */
+    /** TMDBFilm title */
     @BindView(R.id.tv_film_title_detail_view) TextView mFilmTitleTextView;
-    /** Film release date */
+    /** TMDBFilm release date */
     @BindView(R.id.tv_film_release_date_value_detail_view) TextView mFilmReleaseDateTextView;
-    /** Film poster */
+    /** TMDBFilm poster */
     @BindView(R.id.iv_film_poster_detail_view) ImageView mFilmPosterImageView;
-    /** Film overview */
+    /** TMDBFilm overview */
     @BindView(R.id.tv_film_overview_detail_view) TextView mFilmOverviewTextView;
-    /** Film rating (over 10) */
+    /** TMDBFilm rating (over 10) */
     @BindView(R.id.tv_film_rating_detail_view) TextView mFilmRatingTextView;
-    /** Film genres */
+    /** TMDBFilm genres */
     @BindView(R.id.tv_film_genres_detail_view) TextView mFilmGenresTextView;
-    /** Film add to favorites button */
+    /** TMDBFilm add to favorites button */
     @BindView(R.id.iv_film_add_to_favorite_icon_detail_view) ImageView mAddFilmToFavsImageView;
-    /** Film add/remove to/from favorites Text */
+    /** TMDBFilm add/remove to/from favorites Text */
     @BindView(R.id.tv_film_add_to_favorite_label_detail_view) TextView mAddRemoveFilmToFromTextView;
 
 
@@ -230,37 +231,37 @@ public class DetailFilmActivityDataFragment extends Fragment {
     //--------------------------------------------------------------------------------|
 
     /**
-     * Populate UI elements of Detailed Film screen with data retrieved
-     * from Film model object.
+     * Populate UI elements of Detailed TMDBFilm screen with data retrieved
+     * from TMDBFilm model object.
      *
-     * @param   film    Film model object
+     * @param   TMDBFilm    TMDBFilm model object
      */
-    public void populateUI(@NonNull final Film film) {
-        mFilmTitleTextView.setText(film.getTitle());
+    public void populateUI(@NonNull final TMDBFilm TMDBFilm) {
+        mFilmTitleTextView.setText(TMDBFilm.getTitle());
         filmPosterURL =
                 GlobalsPopularMovies.DEFAULT_BASE_URL + "/"
                         + GlobalsPopularMovies.DEFAULT_POSTER_WIDTH + "/"
-                        + film.getPosterPath();
+                        + TMDBFilm.getPosterPath();
         Picasso.with(mContext)
                 .load(filmPosterURL)
                 .centerCrop()
                 .fit()
                 .error(R.drawable.im_image_not_available)
                 .into(mFilmPosterImageView);
-        mFilmReleaseDateTextView.setText(film.getReleaseDate());
-        mFilmOverviewTextView.setText(film.getOverview());
-        mFilmGenresTextView.setText(buildGenresString(film));
+        mFilmReleaseDateTextView.setText(TMDBFilm.getReleaseDate());
+        mFilmOverviewTextView.setText(TMDBFilm.getOverview());
+        mFilmGenresTextView.setText(buildGenresString(TMDBFilm));
         mFilmOverviewTextView.setMovementMethod(new ScrollingMovementMethod());
         mFilmRatingTextView.setText(getString(R.string.film_rating,
-                Double.toString(film.getVoteAverage())));
+                Double.toString(TMDBFilm.getVoteAverage())));
 
-        Log.d(TAG, "Film title: " + film.getTitle());
-        Log.d(TAG, "Film poster URL: " + filmPosterURL);
-        Log.d(TAG, "Film release-date: " + film.getReleaseDate());
-        Log.d(TAG, "Film overview: " + film.getOverview());
-        Log.d(TAG, "Film rating " + getString(R.string.film_rating,
-                Double.toString(film.getVoteAverage())));
-        Log.d(TAG, "Film added on favs? " + (isFavFilm ? "TRUE" : "FALSE"));
+        Log.d(TAG, "TMDBFilm title: " + TMDBFilm.getTitle());
+        Log.d(TAG, "TMDBFilm poster URL: " + filmPosterURL);
+        Log.d(TAG, "TMDBFilm release-date: " + TMDBFilm.getReleaseDate());
+        Log.d(TAG, "TMDBFilm overview: " + TMDBFilm.getOverview());
+        Log.d(TAG, "TMDBFilm rating " + getString(R.string.film_rating,
+                Double.toString(TMDBFilm.getVoteAverage())));
+        Log.d(TAG, "TMDBFilm added on favs? " + (isFavFilm ? "TRUE" : "FALSE"));
     }
 
     /**
@@ -287,16 +288,16 @@ public class DetailFilmActivityDataFragment extends Fragment {
     //--------------------------------------------------------------------------------|
 
     /**
-     * Retrieve film genres from Genres look-up table (get genre/movie/list - TMDB API Request)
+     * Retrieve TMDBFilm genres from Genres look-up table (get genre/movie/list - TMDB API Request)
      *
-     * @param   film Film model object
-     * @return  Film genres (String)
+     * @param   TMDBFilm TMDBFilm model object
+     * @return  TMDBFilm genres (String)
      */
-    private String buildGenresString(@NonNull Film film) {
+    private String buildGenresString(@NonNull TMDBFilm TMDBFilm) {
         StringBuilder sGenres = new StringBuilder("");
         GenresResponse genres = GenresResponse.getInstance();
         if(genres != null) {
-            ArrayList<Integer> filmGenres = film.getGenreIds();
+            List<Integer> filmGenres = TMDBFilm.getGenreIds();
             for (int i = 0; i < filmGenres.size(); i++) {
                 int genreID = Integer.valueOf(filmGenres.get(i));
                 for (Genres genre : genres.getGenres()) {
@@ -310,7 +311,7 @@ public class DetailFilmActivityDataFragment extends Fragment {
                     }
                 }
             }
-            Log.d(TAG, "Film genres: " + sGenres.toString());
+            Log.d(TAG, "TMDBFilm genres: " + sGenres.toString());
             return sGenres.toString();
         } else {
             return getString(R.string.no_film_categories);

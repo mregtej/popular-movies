@@ -13,6 +13,7 @@ import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.tmdb_model.Video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,7 +37,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
     //--------------------------------------------------------------------------------|
 
     /** List of trailers - Model data List<Video> */
-    private List<Video> mTrailerList;
+    private ArrayList<Video> mTrailerList;
     /** Play listener */
     private OnPlayItemClickListener mPlayListener;
     /** Activity Context */
@@ -71,7 +72,7 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
      * @param trailers  Array of trailers
      * @param listener  Trailer click-listener
      */
-    public TrailerAdapter(List<Video> trailers, OnPlayItemClickListener listener) {
+    public TrailerAdapter(ArrayList<Video> trailers, OnPlayItemClickListener listener) {
         mTrailerList = trailers;
         mPlayListener = listener;
     }
@@ -86,9 +87,14 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
      *
      * @param mTrailerList   Array of film-trailers
      */
-    public void setmTrailerList(List<Video> mTrailerList) {
+    public void setmTrailerList(ArrayList<Video> mTrailerList) {
         this.mTrailerList = mTrailerList;
     }
+
+    /**
+     * Gets the array of film-trailers
+     */
+    public ArrayList<Video> getmTrailerList() { return mTrailerList; }
 
     /**
      * Sets the trailer click-listener (comm with DetailMainActivityTrailersFragment)

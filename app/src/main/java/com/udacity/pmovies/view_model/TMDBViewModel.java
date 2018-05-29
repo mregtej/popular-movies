@@ -10,7 +10,7 @@ import android.support.annotation.NonNull;
 import com.udacity.pmovies.application.PMoviesApp;
 import com.udacity.pmovies.repositories.TMDBRepository;
 import com.udacity.pmovies.rest.TMDBApiInterface;
-import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 import com.udacity.pmovies.tmdb_model.GenresResponse;
 import com.udacity.pmovies.tmdb_model.Images;
 import com.udacity.pmovies.tmdb_model.Review;
@@ -32,11 +32,11 @@ public class TMDBViewModel extends AndroidViewModel {
         this.mApiKey = api_key;
     }
 
-    public LiveData<List<Film>> getMostPopularMovies() {
+    public LiveData<List<TMDBFilm>> getMostPopularMovies() {
         return mTmdbRepository.getMostPopularMovies(mApiKey);
     }
 
-    public LiveData<List<Film>> getTopRatedMovies() {
+    public LiveData<List<TMDBFilm>> getTopRatedMovies() {
         return mTmdbRepository.getTopRatedMovies(mApiKey);
     }
 

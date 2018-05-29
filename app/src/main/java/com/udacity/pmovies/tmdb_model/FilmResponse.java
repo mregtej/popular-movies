@@ -9,7 +9,7 @@ public class FilmResponse {
     @SerializedName("page")
     private int page;
     @SerializedName("results")
-    private ArrayList<Film> results;
+    private ArrayList<TMDBFilm> results;
     @SerializedName("total_results")
     private int totalResults;
     @SerializedName("total_pages")
@@ -23,11 +23,11 @@ public class FilmResponse {
         this.page = page;
     }
 
-    public ArrayList<Film> getResults() {
+    public ArrayList<TMDBFilm> getResults() {
         return results;
     }
 
-    public void setResults(ArrayList<Film> results) {
+    public void setResults(ArrayList<TMDBFilm> results) {
         this.results = results;
     }
 

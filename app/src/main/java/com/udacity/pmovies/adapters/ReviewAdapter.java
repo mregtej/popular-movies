@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.tmdb_model.Review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,7 +32,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     //--------------------------------------------------------------------------------|
 
     /** List of reviews - Model data List<Review> */
-    private List<Review> mReviewList;
+    private ArrayList<Review> mReviewList;
     /** Activity Context */
     private Context mContext;
 
@@ -55,9 +56,14 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
      *
      * @param mReviewList   array of film-reviews
      */
-    public void setmReviewList(List<Review> mReviewList) {
+    public void setmReviewList(ArrayList<Review> mReviewList) {
         this.mReviewList = mReviewList;
     }
+
+    /**
+     * Gets the array of film-reviews
+     */
+    public ArrayList<Review> getmReviewList() { return mReviewList; }
 
 
     //--------------------------------------------------------------------------------|
@@ -88,7 +94,10 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     }
 
     @Override
-    public int getItemCount() { return mReviewList.size(); }
+    public int getItemCount() {
+        if(mReviewList != null) {return mReviewList.size(); }
+        else { return 0; }
+    }
 
 
     //--------------------------------------------------------------------------------|

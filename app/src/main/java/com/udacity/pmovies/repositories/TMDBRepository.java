@@ -7,10 +7,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.udacity.pmovies.application.PMoviesExecutors;
+import com.udacity.pmovies.database_model.FavFilm;
 import com.udacity.pmovies.database_model.FavoriteMoviesRoomDatabase;
 import com.udacity.pmovies.rest.TMDBApiInterface;
 import com.udacity.pmovies.tmdb_model.APIConfigurationResponse;
-import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 import com.udacity.pmovies.tmdb_model.FilmResponse;
 import com.udacity.pmovies.tmdb_model.GenresResponse;
 import com.udacity.pmovies.tmdb_model.Images;
@@ -44,7 +45,7 @@ public class TMDBRepository {
     private TMDBApiInterface mTMDBApiClient;
 
     private final FavoriteMoviesRoomDatabase mFavoriteMoviesDB;
-    private MediatorLiveData<List<Film>> mObservableFavoriteMovies;
+    private MediatorLiveData<List<FavFilm>> mObservableFavoriteMovies;
     private final PMoviesExecutors mExecutors;
 
     //--------------------------------------------------------------------------------|
@@ -91,11 +92,11 @@ public class TMDBRepository {
     //                               Local DB Ops                                     |
     //--------------------------------------------------------------------------------|
 
-    public LiveData<List<Film>> getAllFavMovies() {
+    public LiveData<List<FavFilm>> getAllFavMovies() {
         return mObservableFavoriteMovies;
     }
 
-    public void insert(final Film favMovie) {
+    public void insert(final FavFilm favMovie) {
         mExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -105,7 +106,7 @@ public class TMDBRepository {
 
     }
 
-    public void delete(final Film favMovie) {
+    public void delete(final FavFilm favMovie) {
         mExecutors.diskIO().execute(new Runnable() {
             @Override
             public void run() {
@@ -122,18 +123,22 @@ public class TMDBRepository {
      * get /movie/popular
      * https://developers.themoviedb.org/3/movies/get-popular-movies
      */
-    public LiveData<List<Film>> getMostPopularMovies(@NonNull final String api_key) {
-        final MutableLiveData<List<Film>> data = new MutableLiveData<>();
+    public LiveData<List<TMDBFilm>> getMostPopularMovies(@NonNull final String api_key) {
+        final MutableLiveData<List<TMDBFilm>> data = new MutableLiveData<>();
         mExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
                 mTMDBApiClient.getMostPopularMovies(api_key).enqueue(new Callback<FilmResponse>() {
                     @Override
                     public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                        ArrayList<Film> films = response.body().getResults();
-                        Log.d(TAG, "TMDB - Requested most popular movies. " +
-                                "Number of movies received: " + films.size());
-                        data.setValue(films);
+                        if(response != null) {
+                            ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested most popular movies. " +
+                                    "Number of movies received: " + TMDBFilms.size());
+                            data.setValue(TMDBFilms);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override
@@ -151,18 +156,22 @@ public class TMDBRepository {
      * get /movie/top_rated
      * https://developers.themoviedb.org/3/movies/get-top-rated-movies
      */
-    public LiveData<List<Film>> getTopRatedMovies(@NonNull final String api_key) {
-        final MutableLiveData<List<Film>> data = new MutableLiveData<>();
+    public LiveData<List<TMDBFilm>> getTopRatedMovies(@NonNull final String api_key) {
+        final MutableLiveData<List<TMDBFilm>> data = new MutableLiveData<>();
         mExecutors.networkIO().execute(new Runnable() {
             @Override
             public void run() {
                 mTMDBApiClient.getTopRatedMovies(api_key).enqueue(new Callback<FilmResponse>() {
                     @Override
                     public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                        ArrayList<Film> films = response.body().getResults();
-                        Log.d(TAG, "TMDB - Requested top rated movies. " +
-                                "Number of movies received: " + films.size());
-                        data.setValue(films);
+                        if(response != null) {
+                            ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested top rated movies. " +
+                                    "Number of movies received: " + TMDBFilms.size());
+                            data.setValue(TMDBFilms);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override
@@ -189,10 +198,14 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<APIConfigurationResponse> call,
                                            Response<APIConfigurationResponse> response) {
-                        Images images = Images.getInstance();
-                        images.setImageFields(response.body().getImages());
-                        Log.d(TAG, "TMDB API Config received");
-                        data.setValue(images);
+                        if(response != null) {
+                            Images images = Images.getInstance();
+                            images.setImageFields(response.body().getImages());
+                            Log.d(TAG, "TMDB API Config received");
+                            data.setValue(images);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override
@@ -219,10 +232,14 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<GenresResponse> call,
                                            Response<GenresResponse> response) {
-                        GenresResponse genres = GenresResponse.getInstance();
-                        genres.setGenres(response.body().getGenres());
-                        Log.d(TAG, "TMDB Genres received");
-                        data.setValue(genres);
+                        if(response != null) {
+                            GenresResponse genres = GenresResponse.getInstance();
+                            genres.setGenres(response.body().getGenres());
+                            Log.d(TAG, "TMDB Genres received");
+                            data.setValue(genres);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override
@@ -250,10 +267,14 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<VideosResponse> call,
                                            Response<VideosResponse> response) {
-                        List<Video> trailers = response.body().getResults();
-                        Log.d(TAG, "TMDB - Requested trailers for film_id: " + film_id +
-                                ". Number of trailers received: " + trailers.size());
-                        data.setValue(trailers);
+                        if(response != null) {
+                            List<Video> trailers = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested trailers for film_id: " + film_id +
+                                    ". Number of trailers received: " + trailers.size());
+                            data.setValue(trailers);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override
@@ -281,10 +302,14 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<ReviewsResponse> call,
                                            Response<ReviewsResponse> response) {
-                        List<Review> reviews = response.body().getResults();
-                        Log.d(TAG, "TMDB - Requested reviews for film_id: " + film_id +
-                                ". Number of reviews received: " + reviews.size());
-                        data.setValue(reviews);
+                        if(response != null) {
+                            List<Review> reviews = response.body().getResults();
+                            Log.d(TAG, "TMDB - Requested reviews for film_id: " + film_id +
+                                    ". Number of reviews received: " + reviews.size());
+                            data.setValue(reviews);
+                        } else {
+                            data.setValue(null);
+                        }
                     }
 
                     @Override

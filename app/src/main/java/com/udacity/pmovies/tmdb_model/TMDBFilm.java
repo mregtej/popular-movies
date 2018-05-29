@@ -1,8 +1,5 @@
 package com.udacity.pmovies.tmdb_model;
 
-import android.arch.persistence.room.ColumnInfo;
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
@@ -10,88 +7,71 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.List;
 
 /**
- * Film Model
+ * TMDBFilm Model
  */
-@Entity(tableName = "fav_movies_table")
-public class Film implements Parcelable {
+public class TMDBFilm implements Parcelable {
 
-    @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "id")
     @SerializedName("id")
     private Integer id;
     @NonNull
-    @ColumnInfo(name = "title")
     @SerializedName("title")
     private String title;
-    @ColumnInfo(name = "poster_path")
     @SerializedName("poster_path")
     private String posterPath;
-    @ColumnInfo(name = "adult")
     @SerializedName("adult")
     private boolean adult;
-    @ColumnInfo(name = "overview")
     @SerializedName("overview")
     private String overview;
-    @ColumnInfo(name = "release_date")
     @SerializedName("release_date")
     private String releaseDate;
-    @ColumnInfo(name = "genre_ids")
-    @SerializedName("genre_ids")
-    private ArrayList<Integer> genreIds;
-    @ColumnInfo(name = "original_title")
     @SerializedName("original_title")
     private String originalTitle;
-    @ColumnInfo(name = "original_language")
     @SerializedName("original_language")
     private String originalLanguage;
-    @ColumnInfo(name = "backdrop_path")
     @SerializedName("backdrop_path")
     private String backdropPath;
-    @ColumnInfo(name = "popularity")
     @SerializedName("popularity")
     private Double popularity;
-    @ColumnInfo(name = "vote_count")
     @SerializedName("vote_count")
     private Integer voteCount;
-    @ColumnInfo(name = "video")
     @SerializedName("video")
     private Boolean video;
-    @ColumnInfo(name = "vote_average")
     @SerializedName("vote_average")
     private Double voteAverage;
+    @SerializedName("genre_ids")
+    private List<Integer> genreIds;
 
     /**
      * Constructor initialized from JSON parser
      *
      * @param posterPath        Path of film poster
-     * @param adult             Film adult (pornography) category
-     * @param overview          Film overview
-     * @param releaseDate       Film release date
-     * @param genreIds          Film genres
+     * @param adult             TMDBFilm adult (pornography) category
+     * @param overview          TMDBFilm overview
+     * @param releaseDate       TMDBFilm release date
+     * @param genreIds          TMDBFilm genres
      * @param id                Unique film ID (DB)
      * @param originalTitle     Original film title
      * @param originalLanguage  Original film language
-     * @param title             Film title (EN)
+     * @param title             TMDBFilm title (EN)
      * @param backdropPath      Path of film backdrop-image
-     * @param popularity        Film popularity
+     * @param popularity        TMDBFilm popularity
      * @param voteCount         Number of film comments / ratings
-     * @param video             Film video flag
+     * @param video             TMDBFilm video flag
      * @param voteAverage       Average film rating
      */
-    public Film(String posterPath, boolean adult, String overview, String releaseDate,
-                ArrayList<Integer> genreIds, Integer id, String originalTitle,
-                String originalLanguage, String title, String backdropPath, Double popularity,
-                Integer voteCount, Boolean video, Double voteAverage)
+    public TMDBFilm(String posterPath, boolean adult, String overview, String releaseDate,
+                    int id, String originalTitle, String originalLanguage, String title,
+                    String backdropPath, double popularity, int voteCount, boolean video,
+                    double voteAverage, List<Integer> genreIds)
     {
         this.posterPath = posterPath;
         this.adult = adult;
         this.overview = overview;
         this.releaseDate = releaseDate;
-        this.genreIds = genreIds;
         this.id = id;
         this.originalTitle = originalTitle;
         this.originalLanguage = originalLanguage;
@@ -101,67 +81,29 @@ public class Film implements Parcelable {
         this.voteCount = voteCount;
         this.video = video;
         this.voteAverage = voteAverage;
+        this.genreIds = genreIds;
     }
 
-    /**
-     * Retrieves Film data from Parcel object
-     * This method is invoked by the method createFromParcel of object CREATOR
-     * @param   in      Film parcelable object
-     */
-    private Film(Parcel in){
-        this.posterPath = in.readString();
-        this.adult = in.readInt() == 1;
-        this.overview = in.readString();
-        this.releaseDate = in.readString();
-        this.genreIds = in.readArrayList(Integer.class.getClassLoader());
-        this.id = in.readInt();
-        this.originalTitle = in.readString();
-        this.originalLanguage = in.readString();
-        this.title = in.readString();
-        this.backdropPath = in.readString();
-        this.popularity = in.readDouble();
-        this.voteCount = in.readInt();
-        this.video = in.readInt() == 1;
-        this.voteAverage = in.readDouble();
+    @NonNull
+    public Integer getId() {
+        return id;
     }
 
-    public static final Parcelable.Creator<Film> CREATOR = new Parcelable.Creator<Film>() {
-        @Override
-        public Film createFromParcel(Parcel source) {
-            return new Film(source);
-        }
-
-        @Override
-        public Film[] newArray(int size) {
-            return new Film[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public void setId(@NonNull Integer id) {
+        this.id = id;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.posterPath);
-        dest.writeInt(this.adult ? 1 : 0);
-        dest.writeString(this.overview);
-        dest.writeString(this.releaseDate);
-        dest.writeList(this.genreIds);
-        dest.writeInt(this.id);
-        dest.writeString(this.originalTitle);
-        dest.writeString(this.originalLanguage);
-        dest.writeString(this.title);
-        dest.writeString(this.backdropPath);
-        dest.writeDouble(this.popularity);
-        dest.writeInt(this.voteCount);
-        dest.writeInt(this.video ? 1 : 0);
-        dest.writeDouble(this.voteAverage);
+    @NonNull
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(@NonNull String title) {
+        this.title = title;
     }
 
     public String getPosterPath() {
-        return this.posterPath;
+        return posterPath;
     }
 
     public void setPosterPath(String posterPath) {
@@ -192,22 +134,6 @@ public class Film implements Parcelable {
         this.releaseDate = releaseDate;
     }
 
-    public ArrayList<Integer> getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(ArrayList<Integer> genreIds) {
-        this.genreIds = genreIds;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getOriginalTitle() {
         return originalTitle;
     }
@@ -222,14 +148,6 @@ public class Film implements Parcelable {
 
     public void setOriginalLanguage(String originalLanguage) {
         this.originalLanguage = originalLanguage;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getBackdropPath() {
@@ -272,6 +190,71 @@ public class Film implements Parcelable {
         this.voteAverage = voteAverage;
     }
 
+    public void setGenreIds(List<Integer> genreIds) {
+        this.genreIds = genreIds;
+    }
+
+    public List<Integer> getGenreIds() {
+        return genreIds;
+    }
+
+    /**
+     * Retrieves TMDBFilm data from Parcel object
+     * This method is invoked by the method createFromParcel of object CREATOR
+     * @param   in      TMDBFilm parcelable object
+     */
+    private TMDBFilm(Parcel in){
+        this.posterPath = in.readString();
+        this.adult = in.readInt() == 1;
+        this.overview = in.readString();
+        this.releaseDate = in.readString();
+        this.id = in.readInt();
+        this.originalTitle = in.readString();
+        this.originalLanguage = in.readString();
+        this.title = in.readString();
+        this.backdropPath = in.readString();
+        this.popularity = in.readDouble();
+        this.voteCount = in.readInt();
+        this.video = in.readInt() == 1;
+        this.voteAverage = in.readDouble();
+        this.genreIds = in.readArrayList(Integer.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<TMDBFilm> CREATOR = new Parcelable.Creator<TMDBFilm>() {
+        @Override
+        public TMDBFilm createFromParcel(Parcel source) {
+            return new TMDBFilm(source);
+        }
+
+        @Override
+        public TMDBFilm[] newArray(int size) {
+            return new TMDBFilm[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.posterPath);
+        dest.writeInt(this.adult ? 1 : 0);
+        dest.writeString(this.overview);
+        dest.writeString(this.releaseDate);
+        dest.writeInt(this.id);
+        dest.writeString(this.originalTitle);
+        dest.writeString(this.originalLanguage);
+        dest.writeString(this.title);
+        dest.writeString(this.backdropPath);
+        dest.writeDouble(this.popularity);
+        dest.writeInt(this.voteCount);
+        dest.writeInt(this.video ? 1 : 0);
+        dest.writeDouble(this.voteAverage);
+        dest.writeList(this.genreIds);
+    }
+
     private static int[] convertIntegers(ArrayList<Integer> integers)
     {
         int[] ret = new int[integers.size()];
@@ -290,4 +273,5 @@ public class Film implements Parcelable {
         }
         return ret;
     }
+
 }

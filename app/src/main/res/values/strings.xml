@@ -27,7 +27,7 @@
     <string name="film_backdrop_content_description">Film backdrop</string>
     <string name="film_review_author_content_description">Author review</string>
     <string name="film_review_content_content_description">Content review</string>
-    <string name="film_add_to_favs_content_description">Add film to favs button</string>
+    <string name="film_add_to_favs_content_description">Add TMDBFilm to favs button</string>
 
     <!-- Connectivity AlertDialog (Wifi/3G) strings -->
     <string name="network_failure">Network connection failure</string>

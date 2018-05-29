@@ -1,8 +1,6 @@
 package com.udacity.pmovies.ui;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -122,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         MainActivityFragment mainActivityFragment = (MainActivityFragment)
                 getSupportFragmentManager().findFragmentById(R.id.fr_main);
         if(mainActivityFragment != null) {
-            mainActivityFragment.updateAdapter(panel_selection);
+            mainActivityFragment.setAdapter(panel_selection);
         }
     }
 

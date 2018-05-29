@@ -1,7 +1,9 @@
 package com.udacity.pmovies.comms;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -9,20 +11,31 @@ import android.util.Log;
 /**
  * Connectivity library support (WiFi/3G).
  */
-public class ConnectivityHandler {
+public class ConnectivityHandler extends BroadcastReceiver {
 
     private static final String TAG = ConnectivityHandler.class.getSimpleName();
 
-    /**
-     * Checks the device connectivity (WiFi and/or 3G).
-     *
-     * @param	activity	Current Activity.
-     * @return	(boolean)	True, if the device is connected or connecting;
-     * 							false, otherwise.
-     */
-    public static boolean checkConnectivity(Activity activity) {
+    public static ConnectivityHandlerListener connectivityHandlerListener;
 
-        ConnectivityManager connManager = (ConnectivityManager) activity
+    public ConnectivityHandler() {
+        super();
+    }
+
+    @Override
+    public void onReceive(Context context, Intent arg1) {
+        ConnectivityManager cm = (ConnectivityManager) context
+                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        boolean isConnected = activeNetwork != null
+                && activeNetwork.isConnectedOrConnecting();
+
+        if (connectivityHandlerListener != null) {
+            connectivityHandlerListener.onNetworkConnectionChanged(isConnected);
+        }
+    }
+
+    public static boolean isConnected(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = null;
 
@@ -34,7 +47,11 @@ public class ConnectivityHandler {
 
         return networkInfo != null && networkInfo.isConnectedOrConnecting()
                 && networkInfo.isAvailable();
+    }
 
+
+    public interface ConnectivityHandlerListener {
+        void onNetworkConnectionChanged(boolean isConnected);
     }
 
     /**
@@ -44,7 +61,7 @@ public class ConnectivityHandler {
      * @return	(boolean)	True, if WiFi is connected or connecting;
      * 							false, otherwise.
      */
-    public static boolean checkWifiConnectivity(Activity activity) {
+    private static boolean checkWifiConnectivity(Activity activity) {
 
         ConnectivityManager connManager = (ConnectivityManager) activity
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -68,7 +85,7 @@ public class ConnectivityHandler {
      * @return	(boolean)	True, if 3G is connected or connecting;
      * 							false, otherwise.
      */
-    public static boolean check3GConnectivity(Activity activity) {
+    private static boolean check3GConnectivity(Activity activity) {
 
         ConnectivityManager connManager = (ConnectivityManager) activity
                 .getSystemService(Context.CONNECTIVITY_SERVICE);

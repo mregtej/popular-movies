@@ -15,6 +15,7 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.adapters.ReviewAdapter;
 import com.udacity.pmovies.tmdb_model.Review;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,6 +32,8 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
 
     /** Key for storing the list state */
     private static final String LIST_STATE_KEY = "list-state";
+    /** Key for storing the Adapter data */
+    private static final String REVIEW_ADAPTER_KEY = "review-adapter";
 
     //--------------------------------------------------------------------------------|
     //                               Params                                           |
@@ -38,14 +41,14 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
 
     /** DetailFilmActivity context */
     private Context mContext;
-    /** Film Reviews Custom ArrayAdapter */
+    /** TMDBFilm Reviews Custom ArrayAdapter */
     private ReviewAdapter mReviewAdapter;
     /** RecyclerView LayoutManager instance */
     private RecyclerView.LayoutManager layoutManager;
     /** List state */
     private Parcelable mListState;
 
-    /** Film Reviews RecyclerView (Carousel) */
+    /** TMDBFilm Reviews RecyclerView (Carousel) */
     @BindView(R.id.rv_film_reviews_detail_view) RecyclerView mReviewsRecyclerView;
 
 
@@ -68,6 +71,9 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
 
         // Load & set ArrayAdapter
         mReviewAdapter = new ReviewAdapter();
+        if(savedInstanceState != null) {
+            updateAdapter(savedInstanceState.getParcelableArrayList(REVIEW_ADAPTER_KEY));
+        }
 
         return rootView;
     }
@@ -85,6 +91,8 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
         mListState = layoutManager.onSaveInstanceState();
         savedInstanceState.putParcelable(LIST_STATE_KEY, mListState);
+        savedInstanceState.putParcelableArrayList(REVIEW_ADAPTER_KEY,
+                mReviewAdapter.getmReviewList());
     }
 
     @Override
@@ -117,7 +125,7 @@ public class DetailFilmActivityReviewsFragment extends Fragment {
      *
      * @param   filmReviews    List of film-reviews retrieved from TMDB
      */
-    public void updateAdapter(List<Review> filmReviews) {
+    public void updateAdapter(ArrayList<Review> filmReviews) {
         mReviewAdapter.setmReviewList(filmReviews);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
         mReviewAdapter.notifyDataSetChanged();

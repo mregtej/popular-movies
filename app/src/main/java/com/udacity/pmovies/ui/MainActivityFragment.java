@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,17 +18,21 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
+import com.udacity.pmovies.application.PMoviesApp;
 import com.udacity.pmovies.comms.ConnectivityHandler;
+import com.udacity.pmovies.database_model.FavFilm;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
 import com.udacity.pmovies.rest.TMDBApiClient;
 import com.udacity.pmovies.rest.TMDBApiInterface;
-import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 import com.udacity.pmovies.adapters.FilmsAdapter;
+import com.udacity.pmovies.ui.utils.FilmUtils;
 import com.udacity.pmovies.ui.utils.SharedPrefsUtils;
 import com.udacity.pmovies.ui.widgets.AlertDialogHelper;
 import com.udacity.pmovies.view_model.FavoriteMoviesViewModel;
 import com.udacity.pmovies.view_model.TMDBViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,8 +40,6 @@ import butterknife.ButterKnife;
 
 /**
  * PMovies MainActivityFragment
- *
- * TODO Implement MVP pattern
  */
 public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFilmItemClickListener {
 
@@ -57,7 +58,7 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     private final static String TOP_RATED_STATE_MENU_ITEM_KEY = "top-rated-state";
     private final static String FAVORITES_STATE_MENU_ITEM_KEY = "favorites-state";
 
-    /** Key for retrieving Film parcelable object from intent */
+    /** Key for retrieving TMDBFilm parcelable object from intent */
     private static final String FILM_EXTRA = "film";
     /** Key for identifying if film is in favorite film list */
     private static final String IS_IN_FAVS_EXTRA = "is-in-favs";
@@ -78,12 +79,13 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     /** List state stored in savedInstanceState */
     private Parcelable mListState;
 
-    /**  film list */
-    private List<Film> mTopRatedFilms;
-    /**  film list */
-    private List<Film> mMostPopularFilms;
+    /** Top Rated film list */
+    private static ArrayList<TMDBFilm> mTopRatedTMDBFilms;
+    /** Most Popular film list */
+    private static ArrayList<TMDBFilm> mMostPopularTMDBFilms;
     /** Favorite film list */
-    private List<Film> mFavoriteMovies;
+    private static ArrayList<TMDBFilm> mFavoriteMovies;
+    /** Panel Selection - TOP RATED, MOST POPULAR or FAVORITES */
     private int mPanelSelection;
 
     /** FavMovies ViewModel instance */
@@ -109,33 +111,6 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     //--------------------------------------------------------------------------------|
 
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        /**************************************************************/
-        /*                 FavoriteMoviesViewModel                    */
-        /**************************************************************/
-        // Create FavoriteMoviesViewModel Factory for param injection
-        FavoriteMoviesViewModel.Factory favMov_factory = new FavoriteMoviesViewModel.Factory(
-                getActivity().getApplication());
-        // Get instance of FavoriteMoviesViewModel
-        mFavoriteMoviesViewModel = ViewModelProviders.of(this, favMov_factory)
-                    .get(FavoriteMoviesViewModel.class);
-
-        /**************************************************************/
-        /*                        TMDBViewModel                       */
-        /**************************************************************/
-        // Create TMDB API client
-        apiService = TMDBApiClient.getClient().create(TMDBApiInterface.class);
-        // Create TMDBViewModel Factory for param injection
-        TMDBViewModel.Factory tmdb_factory = new TMDBViewModel.Factory(
-                getActivity().getApplication(), apiService, getString(R.string.TMDB_API_KEY));
-        // Get instance of TMDBViewModel
-        mTmdbViewModel = ViewModelProviders.of(this, tmdb_factory)
-                .get(TMDBViewModel.class);
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,
@@ -143,54 +118,59 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         // Bind Views
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         ButterKnife.bind(this, rootView);
-        recyclerView.setHasFixedSize(true);
         // Save Actvity Context
         mContext = rootView.getContext();
-        // Load & set GridLayout
-        setRecyclerViewLayoutManager(rootView);
-        // Load & set ArrayAdapter
-        mFilmAdapter = new FilmsAdapter(this);
-        // First Initialization - Load film sorting criteria from SharedPreferences
-        if(savedInstanceState == null) {
-            loadPanelSelectionFromSP();
-        }
-        return rootView;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
 
         // Check network connectivity
-        if(!ConnectivityHandler.checkConnectivity(getActivity())) {
+        if (!ConnectivityHandler.isConnected(getActivity())) {
             displayConnectivityAlertDialog();
-        } else {
-            // Check empty API_KEY
-            if (getString(R.string.TMDB_API_KEY).isEmpty()) {
-                displayNoApiKeyAlertDialog();
-            } else {
-                if (mListState != null) {
-                    layoutManager.onRestoreInstanceState(mListState);
-                }
-                // Get API Config - Global access (Singleton pattern)
+        }
+
+        // Check empty API_KEY
+        else if (getString(R.string.TMDB_API_KEY).isEmpty()) {
+            displayNoApiKeyAlertDialog();
+        }
+
+        else {
+
+            // Load & set GridLayout
+            recyclerView.setHasFixedSize(true);
+            setRecyclerViewLayoutManager(rootView);
+
+            // Load & set ArrayAdapter
+            mFilmAdapter = new FilmsAdapter(this);
+
+            if (savedInstanceState == null) {
+                // Load film sorting criteria from SharedPreferences
+                loadPanelSelectionFromSP();
+
+                // Subscribes MainActivityFragment to receive notifications from TMDBViewModel
+                subscribeToTMDBViewModel();
+
+                // Get API Config from from TMDBViewModel
                 mTmdbViewModel.getAPIConfiguration();
-                // Get Film Genres - Global access (Singleton pattern)
+                // Get film genres from TMDBViewModel
                 mTmdbViewModel.getGenres();
-                // Get most popular and top rated movies (LiveData Observer)
+                // Get most popular movies from TMDBViewModel
                 getMostPopularMovies();
+                // Get top rated movies from TMDBViewModel
                 getTopRatedMovies();
-                // Subscribe to FavoriteMoviesViewModel for receiving favorite movie list
-                subscribeToFavoriteMoviesViewModel();
 
             }
+
+            // Subscribes MainActivityFragment to receive notifications from FavoriteMoviesViewModel
+            subscribeToFavoriteMoviesViewModel();
+            // Enable notifications for receiving favorite movie list  from FavoriteMoviesViewModel
+            enableNotificationsFromFavoriteMoviesViewModel();
+
         }
+
+        return rootView;
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-
-        // Save list state
         mListState = layoutManager.onSaveInstanceState();
         savedInstanceState.putParcelable(LIST_STATE_KEY, mListState);
         savedInstanceState.putInt(PANEL_VIEW_KEY, mPanelSelection);
@@ -199,13 +179,20 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        // Retrieve list state and list/item positions
         if(savedInstanceState != null) {
             mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
             mPanelSelection = savedInstanceState.getInt(PANEL_VIEW_KEY);
+            setAdapter(mPanelSelection);
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mListState != null) {
+            layoutManager.onRestoreInstanceState(mListState);
+        }
+    }
 
     //--------------------------------------------------------------------------------|
     //                                  Setters                                       |
@@ -216,7 +203,7 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
      *
      * @param mFavMovies    favorite movie list
      */
-    public void setmFavMovies(List<Film> mFavMovies) {
+    public void setmFavMovies(ArrayList<TMDBFilm> mFavMovies) {
         this.mFavoriteMovies = mFavMovies;
     }
 
@@ -228,49 +215,48 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
      * Display an AlertDialog to warn user that there is no Internet connectivity
      */
     private void displayConnectivityAlertDialog() {
-        AlertDialog connectivityDialog = AlertDialogHelper.createMessage(
+
+        DialogInterface.OnClickListener okListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(
+                        android.provider.Settings.ACTION_WIFI_SETTINGS));
+            }
+        };
+
+        DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent
+                        (android.provider.Settings.ACTION_DATA_ROAMING_SETTINGS));
+            }
+        };
+
+        DialogInterface.OnClickListener neutralListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                getActivity().finish();
+            }
+        };
+
+        DialogInterface.OnDismissListener dismissListener = new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                getActivity().finish();
+            }
+        };
+
+        AlertDialogHelper.createMessage(
                 mContext,
                 this.getResources().getString(R.string.network_failure),
                 this.getResources().getString(R.string.network_user_choice),
                 this.getResources().getString(R.string.network_user_choice_wifi),
                 this.getResources().getString(R.string.network_user_choice_3g),
                 this.getResources().getString(R.string.network_user_choice_no),
+                okListener, cancelListener, neutralListener, dismissListener,
                 true
-        );
-        connectivityDialog.setButton(DialogInterface.BUTTON_POSITIVE,
-                this.getResources().getString(R.string.network_user_choice_wifi),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent(
-                                android.provider.Settings.ACTION_WIFI_SETTINGS));
-                    }
-                });
-        connectivityDialog.setButton(DialogInterface.BUTTON_NEGATIVE,
-                this.getResources().getString(R.string.network_user_choice_3g),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        startActivity(new Intent
-                                (android.provider.Settings.ACTION_DATA_ROAMING_SETTINGS));
-                    }
-                });
-        connectivityDialog.setButton(DialogInterface.BUTTON_NEUTRAL,
-                this.getResources().getString(R.string.network_user_choice_no),
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        getActivity().finish();
-                    }
-                });
-        connectivityDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialog) {
-                getActivity().finish();
-            }
-        });
-        connectivityDialog.show();
+        ).show();
     }
 
     /**
@@ -313,14 +299,14 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
      *
      * @param   panel_selection
      */
-    public void updateAdapter(int panel_selection) {
+    public void setAdapter(int panel_selection) {
         mPanelSelection = panel_selection;
         switch(panel_selection) {
             case GlobalsPopularMovies.MOST_POPULAR_PANEL_VIEW:
-                mFilmAdapter.setFilmList(mMostPopularFilms);
+                mFilmAdapter.setFilmList(mMostPopularTMDBFilms);
                 break;
             case GlobalsPopularMovies.TOP_RATED_PANEL_VIEW:
-                mFilmAdapter.setFilmList(mTopRatedFilms);
+                mFilmAdapter.setFilmList(mTopRatedTMDBFilms);
                 break;
             case GlobalsPopularMovies.FAVORITE_FILMS_PANEL_VIEW:
                 // TODO Add custom
@@ -373,16 +359,16 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         recyclerView.setLayoutManager(layoutManager);
     }
 
-    private void subscribeToFavoriteMoviesViewModel() {
-        mFavoriteMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<Film>>() {
+    private void enableNotificationsFromFavoriteMoviesViewModel() {
+        mFavoriteMoviesViewModel.getAllFavMovies().observe(this, new Observer<List<FavFilm>>() {
             @Override
-            public void onChanged(@Nullable List<Film> favMovies) {
+            public void onChanged(@Nullable List<FavFilm> favMovies) {
                 if (favMovies == null || favMovies.isEmpty()) {
                     return;
                 } else {
-                    mFavoriteMovies = favMovies;
+                    mFavoriteMovies = FilmUtils.convertArrayOfFavFilmsToArrayOfTMDBFilms(favMovies);
                     if(mPanelSelection == GlobalsPopularMovies.FAVORITE_FILMS_PANEL_VIEW) {
-                        updateAdapter(mPanelSelection);
+                        setAdapter(mPanelSelection);
                     }
                 }
             }
@@ -390,19 +376,19 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     }
 
     private void getMostPopularMovies(){
-        mTmdbViewModel.getMostPopularMovies().observe(this, new Observer<List<Film>>() {
+        mTmdbViewModel.getMostPopularMovies().observe(this, new Observer<List<TMDBFilm>>() {
             @Override
-            public void onChanged(@Nullable List<Film> films) {
-                if(films == null || films.isEmpty()) { return; }
+            public void onChanged(@Nullable List<TMDBFilm> TMDBFilms) {
+                if(TMDBFilms == null || TMDBFilms.isEmpty()) { return; }
                 else {
-                    if(mMostPopularFilms == null || mMostPopularFilms.isEmpty()) {
+                    if(mMostPopularTMDBFilms == null || mMostPopularTMDBFilms.isEmpty()) {
                         // Initialization phase
-                        mMostPopularFilms = films;
+                        mMostPopularTMDBFilms = new ArrayList<TMDBFilm>(TMDBFilms);
                         if(mPanelSelection == GlobalsPopularMovies.MOST_POPULAR_PANEL_VIEW) {
-                            updateAdapter(mPanelSelection);
+                            setAdapter(mPanelSelection);
                         }
                     } else {
-                        mMostPopularFilms = films;
+                        mMostPopularTMDBFilms = new ArrayList<TMDBFilm>(TMDBFilms);
                     }
                 }
             }
@@ -410,19 +396,19 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     }
 
     private void getTopRatedMovies(){
-        mTmdbViewModel.getTopRatedMovies().observe(this, new Observer<List<Film>>() {
+        mTmdbViewModel.getTopRatedMovies().observe(this, new Observer<List<TMDBFilm>>() {
             @Override
-            public void onChanged(@Nullable List<Film> films) {
-                if(films == null || films.isEmpty()) { return; }
+            public void onChanged(@Nullable List<TMDBFilm> TMDBFilms) {
+                if(TMDBFilms == null || TMDBFilms.isEmpty()) { return; }
                 else {
-                    if(mTopRatedFilms == null || mTopRatedFilms.isEmpty()) {
+                    if(mTopRatedTMDBFilms == null || mTopRatedTMDBFilms.isEmpty()) {
                         // Initialization phase
-                        mTopRatedFilms = films;
+                        mTopRatedTMDBFilms = new ArrayList<TMDBFilm>(TMDBFilms);
                         if(mPanelSelection == GlobalsPopularMovies.TOP_RATED_PANEL_VIEW) {
-                            updateAdapter(mPanelSelection);
+                            setAdapter(mPanelSelection);
                         }
                     } else {
-                        mTopRatedFilms = films;
+                        mTopRatedTMDBFilms = new ArrayList<TMDBFilm>(TMDBFilms);
                     }
                 }
             }
@@ -436,7 +422,7 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     @Override
     public void onItemClick(int position) {
         Intent i = new Intent(mContext, DetailFilmActivity.class);
-        Film film = mFilmAdapter.getFilm(position);
+        TMDBFilm film = mFilmAdapter.getFilm(position);
         if(film != null) {
             i.putExtra(FILM_EXTRA, film);
             i.putExtra(IS_IN_FAVS_EXTRA, isFilmInFavs(film.getId()));
@@ -449,15 +435,21 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
     //                                Support Methods                                 |
     //--------------------------------------------------------------------------------|
 
+    // Method to manually check connection status
+    private void checkConnection() {
+        boolean isConnected = ConnectivityHandler.isConnected(mContext);
+        displayConnectivityAlertDialog();
+    }
+
     /**
      * Checks if current film is already included in favorite film list.
      *
-     * @param   film_id     Film ID (uid)
+     * @param   film_id     TMDBFilm ID (uid)
      * @return  true, if film is in favorite film list; false, otherwise
      */
     private boolean isFilmInFavs(int film_id) {
         if(mFavoriteMovies != null) {
-            for (Film favMovie : mFavoriteMovies) {
+            for (TMDBFilm favMovie : mFavoriteMovies) {
                 if (film_id == favMovie.getId()) {
                     return true;
                 }
@@ -465,5 +457,26 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         }
         return false;
     }
+
+    private void subscribeToFavoriteMoviesViewModel() {
+        // Create FavoriteMoviesViewModel Factory for param injection
+        FavoriteMoviesViewModel.Factory favMov_factory = new FavoriteMoviesViewModel.Factory(
+                getActivity().getApplication());
+        // Get instance of FavoriteMoviesViewModel
+        mFavoriteMoviesViewModel = ViewModelProviders.of(this, favMov_factory)
+                .get(FavoriteMoviesViewModel.class);
+    }
+
+    private void subscribeToTMDBViewModel() {
+        // Create TMDB API client
+        apiService = TMDBApiClient.getClient().create(TMDBApiInterface.class);
+        // Create TMDBViewModel Factory for param injection
+        TMDBViewModel.Factory tmdb_factory = new TMDBViewModel.Factory(
+                getActivity().getApplication(), apiService, getString(R.string.TMDB_API_KEY));
+        // Get instance of TMDBViewModel
+        mTmdbViewModel = ViewModelProviders.of(this, tmdb_factory)
+                .get(TMDBViewModel.class);
+    }
+
 
 }

@@ -63,6 +63,26 @@ public class AlertDialogHelper {
 
     public static AlertDialog createMessage(Context context, String title,
                                             String message, String okbutton, String cancelbutton,
+                                            String neutralbutton,
+                                            DialogInterface.OnClickListener oklistener,
+                                            DialogInterface.OnClickListener cancellistener,
+                                            DialogInterface.OnClickListener neutrallistener,
+                                            DialogInterface.OnDismissListener dismissListener,
+                                            boolean cancelable) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setNegativeButton(cancelbutton, cancellistener);
+        builder.setNeutralButton(neutralbutton, neutrallistener);
+        builder.setPositiveButton(okbutton, oklistener);
+        builder.setOnDismissListener(dismissListener);
+        builder.setCancelable(cancelable);
+        return builder.create();
+    }
+
+    public static AlertDialog createMessage(Context context, String title,
+                                            String message, String okbutton, String cancelbutton,
                                             String neutralbutton, boolean cancelable) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);

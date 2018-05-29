@@ -18,6 +18,7 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.adapters.TrailerAdapter;
 import com.udacity.pmovies.tmdb_model.Video;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -36,6 +37,8 @@ public class DetailFilmActivityTrailersFragment extends Fragment
     private static final String YOUTUBE_WATCH_BASE_URL = "http://www.youtube.com/watch?v=";
     /** Key for storing the list state */
     private static final String LIST_STATE_KEY = "list-state";
+    /** Key for storing the Adapter data */
+    private static final String TRAILER_ADAPTER_KEY = "trailer-adapter";
 
     //--------------------------------------------------------------------------------|
     //                               Params                                           |
@@ -43,14 +46,14 @@ public class DetailFilmActivityTrailersFragment extends Fragment
 
     /** DetailFilmActivity context */
     private Context mContext;
-    /** Film Trailers Custom ArrayAdapter */
+    /** TMDBFilm Trailers Custom ArrayAdapter */
     private TrailerAdapter mTrailerAdapter;
     /** RecyclerView LayoutManager instance */
     private RecyclerView.LayoutManager layoutManager;
     /** List state */
     private Parcelable mListState;
 
-    /** Film Trailer RecyclerView (Carousel) */
+    /** TMDBFilm Trailer RecyclerView (Carousel) */
     @BindView(R.id.rv_film_trailers_carousel_detail_view) RecyclerView mTrailerRecyclerView;
 
 
@@ -73,6 +76,9 @@ public class DetailFilmActivityTrailersFragment extends Fragment
 
         // Load & set ArrayAdapter
         mTrailerAdapter = new TrailerAdapter(this);
+        if(savedInstanceState != null) {
+            updateAdapter(savedInstanceState.getParcelableArrayList(TRAILER_ADAPTER_KEY));
+        }
 
         return rootView;
     }
@@ -90,6 +96,8 @@ public class DetailFilmActivityTrailersFragment extends Fragment
         super.onSaveInstanceState(savedInstanceState);
         mListState = layoutManager.onSaveInstanceState();
         savedInstanceState.putParcelable(LIST_STATE_KEY, mListState);
+        savedInstanceState.putParcelableArrayList(TRAILER_ADAPTER_KEY,
+                mTrailerAdapter.getmTrailerList());
     }
 
     @Override
@@ -123,7 +131,7 @@ public class DetailFilmActivityTrailersFragment extends Fragment
      *
      * @param   filmTrailers    List of film-trailers retrieved from TMDB
      */
-    public void updateAdapter(List<Video> filmTrailers) {
+    public void updateAdapter(ArrayList<Video> filmTrailers) {
         mTrailerAdapter.setmTrailerList(filmTrailers);
         mTrailerRecyclerView.setAdapter(mTrailerAdapter);
         mTrailerAdapter.notifyDataSetChanged();

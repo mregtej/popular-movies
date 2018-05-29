@@ -11,12 +11,11 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.udacity.pmovies.application.PMoviesExecutors;
-import com.udacity.pmovies.tmdb_model.Film;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 
 import java.util.List;
 
-@Database(entities = {Film.class}, version = 3, exportSchema = false)
-@TypeConverters({FavoriteMoviesConverters.class})
+@Database(entities = {FavFilm.class}, version = 3, exportSchema = false)
 public abstract class FavoriteMoviesRoomDatabase extends RoomDatabase {
 
     private static final String DATABASE_NAME = "favorite-movies-db";
@@ -80,7 +79,7 @@ public abstract class FavoriteMoviesRoomDatabase extends RoomDatabase {
     }
 
     private static void insertData(final FavoriteMoviesRoomDatabase database,
-                                   final List<Film> favoriteMovies) {
+                                   final List<FavFilm> favoriteMovies) {
         database.runInTransaction(() -> {
             database.favoriteMoviesDao().insertAll(favoriteMovies);
         });

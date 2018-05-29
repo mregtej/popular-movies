@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +14,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
-import com.udacity.pmovies.tmdb_model.Film;
 import com.udacity.pmovies.tmdb_model.Images;
+import com.udacity.pmovies.tmdb_model.TMDBFilm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,7 +35,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     /** Log TAG - Class Name */
     private static final String TAG = FilmsAdapter.class.getSimpleName();
 
-    /** Aspect Ratio of Film poster (PosterWidth / PosterHeight) */
+    /** Aspect Ratio of TMDBFilm poster (PosterWidth / PosterHeight) */
     private static final double FILM_POSTER_ASPECT_RATIO = 0.6537;
     /** Default TMDB base URL for displaying DB images */
     private static final String DEFAULT_BASE_URL = "https://image.tmdb.org/t/p/";
@@ -48,9 +47,9 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     //                               Params                                           |
     //--------------------------------------------------------------------------------|
 
-    /** List of films - Model data ArrayList<Film> */
-    private List<Film> mFilmList;
-    /** Film listener */
+    /** List of films - Model data ArrayList<TMDBFilm> */
+    private ArrayList<TMDBFilm> mTMDBFilmList;
+    /** TMDBFilm listener */
     private OnFilmItemClickListener mFilmListener;
     /** API Configuration - Model data Images */
     private final Images mImages;
@@ -68,7 +67,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      * Empty Constructor for PopularFilms Adapter
      */
     public FilmsAdapter() {
-        mFilmList = new ArrayList<>();
+        mTMDBFilmList = new ArrayList<>();
         mFilmListener = null;
         mImages = Images.getInstance();
         mScreenWidth = getScreenWidth();
@@ -80,7 +79,7 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      * @param listener  film click-listener
      */
     public FilmsAdapter(OnFilmItemClickListener listener) {
-        mFilmList = new ArrayList<>();
+        mTMDBFilmList = new ArrayList<>();
         mFilmListener = listener;
         mImages = Images.getInstance();
         mScreenWidth = getScreenWidth();
@@ -94,29 +93,34 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     /**
      * Set new data for populating the Adapter from JSON results
      *
-     * @param FilmList  List of PopularFilm objects to display in a list.
+     * @param TMDBFilmList  List of PopularFilm objects to display in a list.
      */
-    public void setFilmList(List<Film> FilmList) {
-        this.mFilmList = FilmList;
+    public void setFilmList(ArrayList<TMDBFilm> TMDBFilmList) {
+        this.mTMDBFilmList = TMDBFilmList;
     }
 
     /**
-     * Set new Film click-listener
+     * Gets new data for populating the Adapter from JSON results
+     */
+    public ArrayList<TMDBFilm> getmTMDBFilmList() { return mTMDBFilmList; }
+
+    /**
+     * Set new TMDBFilm click-listener
      *
-     * @param mFilmListener Film click-listener
+     * @param mFilmListener TMDBFilm click-listener
      */
     public void setmFilmListener(OnFilmItemClickListener mFilmListener) {
         this.mFilmListener = mFilmListener;
     }
 
     /**
-     * Get a Film
+     * Get a TMDBFilm
      *
-     * @param   position    Film position in GridView
-     * @return  Film        Film parcelable object
+     * @param   position    TMDBFilm position in GridView
+     * @return  TMDBFilm        TMDBFilm parcelable object
      */
-    public Film getFilm(int position) {
-        if(mFilmList != null) { return mFilmList.get(position); }
+    public TMDBFilm getFilm(int position) {
+        if(mTMDBFilmList != null) { return mTMDBFilmList.get(position); }
         else { return null; }
     }
 
@@ -136,15 +140,15 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
-        if(mFilmList != null) {
+        if(mTMDBFilmList != null) {
             // Retrieve data from Model object
-            Film popularFilm = mFilmList.get(position);
+            TMDBFilm popularTMDBFilm = mTMDBFilmList.get(position);
 
             // Set position-tag
             holder.filmLayout.setTag(position);
 
             // Populate UI elements
-            populateUIView(holder, popularFilm);
+            populateUIView(holder, popularTMDBFilm);
 
             // Add OnClickListeners
             setOnClickListenerView(holder);
@@ -152,7 +156,13 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
     }
 
     @Override
-    public int getItemCount() { return mFilmList.size(); }
+    public int getItemCount() {
+        if (mTMDBFilmList != null) {
+            return mTMDBFilmList.size();
+        } else {
+            return 0;
+        }
+    }
 
 
     //--------------------------------------------------------------------------------|
@@ -201,34 +211,6 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
 
 
     //--------------------------------------------------------------------------------|
-    //                          Adapter Support Methods                               |
-    //--------------------------------------------------------------------------------|
-
-    /**
-     * Add a Film into an specific position on ArrayList<Film>
-     *
-     * @param position  Film position
-     * @param item      Film item
-     */
-    public void add(int position, Film item) {
-        mFilmList.add(position, item);
-        Log.d(TAG, "New film inserted in position: " + position);
-        notifyItemInserted(position);
-    }
-
-    /**
-     * Remove a Film from an specific position on ArrayList<Film>
-     *
-     * @param position  Film position
-     */
-    public void remove(int position) {
-        mFilmList.remove(position);
-        Log.d(TAG, "Film inserted from position: " + position);
-        notifyItemRemoved(position);
-    }
-
-
-    //--------------------------------------------------------------------------------|
     //                                UI Methods                                      |
     //--------------------------------------------------------------------------------|
 
@@ -236,9 +218,9 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
      * Populate UI view elements
      *
      * @param holder    ViewHolder (View container)
-     * @param film      Film parcelable object
+     * @param TMDBFilm      TMDBFilm parcelable object
      */
-    private void populateUIView(ViewHolder holder, Film film) {
+    private void populateUIView(ViewHolder holder, TMDBFilm TMDBFilm) {
         // Set poster image
         // Build poster path:
         // base_url + file_size + file_path
@@ -249,13 +231,13 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
             filmPosterURL =
                     mImages.getBaseUrl() + "/"
                             + mImages.getPosterSizes().get(2) + "/"
-                            + film.getPosterPath();
+                            + TMDBFilm.getPosterPath();
         } else {
         */
         filmPosterURL =
                     DEFAULT_BASE_URL + "/"
                             + DEFAULT_POSTER_WIDTH + "/"
-                            + film.getPosterPath();
+                            + TMDBFilm.getPosterPath();
         //}
         Picasso
                 .with(mContext)
@@ -264,8 +246,8 @@ public class FilmsAdapter extends RecyclerView.Adapter<FilmsAdapter.ViewHolder> 
                 .centerCrop()
                 .error(R.drawable.im_image_not_available)
                 .into(holder.filmPosterImageView);
-        // Set title of film
-        holder.filmTitleTextView.setText(film.getTitle());
+        // Set title of TMDBFilm
+        holder.filmTitleTextView.setText(TMDBFilm.getTitle());
     }
 
     private static int getScreenWidth() {
