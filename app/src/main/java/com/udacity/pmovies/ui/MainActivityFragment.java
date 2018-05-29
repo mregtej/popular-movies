@@ -18,7 +18,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.application.PMoviesApp;
 import com.udacity.pmovies.comms.ConnectivityHandler;
 import com.udacity.pmovies.database_model.FavFilm;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
@@ -477,6 +476,5 @@ public class MainActivityFragment extends Fragment implements FilmsAdapter.OnFil
         mTmdbViewModel = ViewModelProviders.of(this, tmdb_factory)
                 .get(TMDBViewModel.class);
     }
-
 
 }

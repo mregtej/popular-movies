@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.udacity.pmovies">
 
+    <permission android:name="com.udacity.pmovies.provider.READ_WRITE"/>
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -33,6 +35,12 @@
         </activity>
 
         <activity android:name=".ui.DetailFilmActivity" />
+
+        <provider
+            android:name=".provider.FavoriteMoviesContentProvider"
+            android:authorities="com.udacity.pmovies.provider"
+            android:exported="true"
+            android:permission="com.udacity.pmovies.provider.READ_WRITE"/>
 
     </application>
 

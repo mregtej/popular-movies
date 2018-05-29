@@ -28,7 +28,6 @@ import com.udacity.pmovies.tmdb_model.GenresResponse;
 import com.udacity.pmovies.view_model.FavoriteMoviesViewModel;
 import com.udacity.pmovies.view_model.TMDBViewModel;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -297,12 +296,11 @@ public class DetailFilmActivityDataFragment extends Fragment {
         StringBuilder sGenres = new StringBuilder("");
         GenresResponse genres = GenresResponse.getInstance();
         if(genres != null) {
-            List<Integer> filmGenres = TMDBFilm.getGenreIds();
-            for (int i = 0; i < filmGenres.size(); i++) {
-                int genreID = Integer.valueOf(filmGenres.get(i));
+            List<Integer> genreIds = TMDBFilm.getGenreIds();
+            for (int genreID : genreIds) {
                 for (Genres genre : genres.getGenres()) {
                     if (genre.getId() == genreID) {
-                        if (i == filmGenres.size() - 1) {
+                        if (genreID == genreIds.size() - 1) {
                             sGenres.append(genre.getName());
                         } else {
                             sGenres.append(genre.getName()).append(", ");

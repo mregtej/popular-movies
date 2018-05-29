@@ -14,7 +14,6 @@ import com.udacity.pmovies.R;
 import com.udacity.pmovies.tmdb_model.Video;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

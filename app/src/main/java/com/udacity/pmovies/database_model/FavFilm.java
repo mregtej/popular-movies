@@ -3,45 +3,45 @@ package com.udacity.pmovies.database_model;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.ContentValues;
 import android.support.annotation.NonNull;
 
-import com.udacity.pmovies.ui.utils.TextUtils;
+import com.udacity.pmovies.provider.FavoriteMoviesContract;
 
-import java.util.ArrayList;
 
-@Entity(tableName = "fav_movies_table")
+@Entity(tableName = FavoriteMoviesContract.FavoriteMoviesEntry.TABLE_NAME)
 public class FavFilm {
 
     @PrimaryKey
     @NonNull
-    @ColumnInfo(name = "id")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ID)
     private Integer id;
     @NonNull
-    @ColumnInfo(name = "title")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE)
     private String title;
-    @ColumnInfo(name = "poster_path")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH)
     private String posterPath;
-    @ColumnInfo(name = "adult")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ADULT)
     private boolean adult;
-    @ColumnInfo(name = "overview")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW)
     private String overview;
-    @ColumnInfo(name = "release_date")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE)
     private String releaseDate;
-    @ColumnInfo(name = "original_title")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_TITLE)
     private String originalTitle;
-    @ColumnInfo(name = "original_language")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_LANGUAGE)
     private String originalLanguage;
-    @ColumnInfo(name = "backdrop_path")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_BACKDROP_PATH)
     private String backdropPath;
-    @ColumnInfo(name = "popularity")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POPULARITY)
     private Double popularity;
-    @ColumnInfo(name = "vote_count")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_COUNT)
     private Integer voteCount;
-    @ColumnInfo(name = "video")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VIDEO)
     private Boolean video;
-    @ColumnInfo(name = "vote_average")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE)
     private Double voteAverage;
-    @ColumnInfo(name = "genre_ids")
+    @ColumnInfo(name = FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_GENRE_IDS)
     private String genreIds;
 
     @NonNull
@@ -158,6 +158,8 @@ public class FavFilm {
         this.genreIds = genreIds;
     }
 
+    public FavFilm() { }
+
     public FavFilm(@NonNull Integer id, @NonNull String title, String posterPath, boolean adult,
                    String overview, String releaseDate, String originalTitle,
                    String originalLanguage, String backdropPath, Double popularity,
@@ -176,6 +178,59 @@ public class FavFilm {
         this.video = video;
         this.voteAverage = voteAverage;
         this.genreIds = genreIds;
+    }
+
+    /**
+     * Create a new {@link FavFilm} from the specified {@link ContentValues}.
+     *
+     * @param values A {@link ContentValues}
+     * @return A newly created {@link FavFilm} instance.
+     */
+    public static FavFilm fromContentValues(ContentValues values) {
+        final FavFilm favFilm = new FavFilm();
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ID)) {
+            favFilm.id = values.getAsInteger(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ID);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE)) {
+            favFilm.title = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_TITLE);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH)) {
+            favFilm.posterPath = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POSTER_PATH);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ADULT)) {
+            favFilm.adult = values.getAsBoolean(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ADULT);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW)) {
+            favFilm.overview = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_OVERVIEW);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE)) {
+            favFilm.releaseDate = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_RELEASE_DATE);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_TITLE)) {
+            favFilm.originalTitle = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_TITLE);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_LANGUAGE)) {
+            favFilm.originalLanguage = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_ORIGINAL_LANGUAGE);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_BACKDROP_PATH)) {
+            favFilm.backdropPath = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_BACKDROP_PATH);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POPULARITY)) {
+            favFilm.popularity = values.getAsDouble(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_POPULARITY);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_COUNT)) {
+            favFilm.voteCount = values.getAsInteger(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_COUNT);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VIDEO)) {
+            favFilm.video = values.getAsBoolean(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VIDEO);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE)) {
+            favFilm.voteAverage = values.getAsDouble(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_VOTE_AVERAGE);
+        }
+        if (values.containsKey(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_GENRE_IDS)) {
+            favFilm.genreIds = values.getAsString(FavoriteMoviesContract.FavoriteMoviesEntry.COLUMN_GENRE_IDS);
+        }
+        return favFilm;
     }
 
 }

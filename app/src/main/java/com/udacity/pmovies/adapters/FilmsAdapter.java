@@ -18,7 +18,6 @@ import com.udacity.pmovies.tmdb_model.Images;
 import com.udacity.pmovies.tmdb_model.TMDBFilm;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

@@ -16,7 +16,6 @@ import com.udacity.pmovies.adapters.ReviewAdapter;
 import com.udacity.pmovies.tmdb_model.Review;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

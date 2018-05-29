@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.pmovies.R;
-import com.udacity.pmovies.application.PMoviesApp;
 import com.udacity.pmovies.comms.ConnectivityHandler;
 import com.udacity.pmovies.database_model.FavFilm;
 import com.udacity.pmovies.globals.GlobalsPopularMovies;
@@ -351,7 +350,6 @@ public class DetailFilmActivity extends FragmentActivity implements
     @Override
     public void onItemClick() {
         if(mIsFilmInFavs) {
-            // TODO Use Repository pattern and re-use film object
             mFavoriteMoviesViewModel.delete(new FavFilm(
                     mTMDBFilm.getId(),
                     mTMDBFilm.getTitle(),
@@ -366,11 +364,9 @@ public class DetailFilmActivity extends FragmentActivity implements
                     mTMDBFilm.getVoteCount(),
                     mTMDBFilm.getVideo(),
                     mTMDBFilm.getVoteAverage(),
-                    TextUtils.convertListOfIntToString(mTMDBFilm.getGenreIds())
-            ));
+                    TextUtils.convertListOfIntToString(mTMDBFilm.getGenreIds())));
             displayToast(getString(R.string.remove_from_favorites_toast, mTMDBFilm.getTitle()));
         } else {
-            // TODO Use Repository pattern and re-use film object
             mFavoriteMoviesViewModel.insert(new FavFilm(
                     mTMDBFilm.getId(),
                     mTMDBFilm.getTitle(),

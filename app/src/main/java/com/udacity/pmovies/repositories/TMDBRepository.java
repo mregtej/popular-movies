@@ -131,14 +131,10 @@ public class TMDBRepository {
                 mTMDBApiClient.getMostPopularMovies(api_key).enqueue(new Callback<FilmResponse>() {
                     @Override
                     public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                        if(response != null) {
-                            ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested most popular movies. " +
-                                    "Number of movies received: " + TMDBFilms.size());
-                            data.setValue(TMDBFilms);
-                        } else {
-                            data.setValue(null);
-                        }
+                        ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
+                        Log.d(TAG, "TMDB - Requested most popular movies. " +
+                                "Number of movies received: " + TMDBFilms.size());
+                        data.setValue(TMDBFilms);
                     }
 
                     @Override
@@ -164,14 +160,10 @@ public class TMDBRepository {
                 mTMDBApiClient.getTopRatedMovies(api_key).enqueue(new Callback<FilmResponse>() {
                     @Override
                     public void onResponse(Call<FilmResponse> call, Response<FilmResponse> response) {
-                        if(response != null) {
-                            ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested top rated movies. " +
-                                    "Number of movies received: " + TMDBFilms.size());
-                            data.setValue(TMDBFilms);
-                        } else {
-                            data.setValue(null);
-                        }
+                        ArrayList<TMDBFilm> TMDBFilms = response.body().getResults();
+                        Log.d(TAG, "TMDB - Requested top rated movies. " +
+                                "Number of movies received: " + TMDBFilms.size());
+                        data.setValue(TMDBFilms);
                     }
 
                     @Override
@@ -198,14 +190,10 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<APIConfigurationResponse> call,
                                            Response<APIConfigurationResponse> response) {
-                        if(response != null) {
-                            Images images = Images.getInstance();
-                            images.setImageFields(response.body().getImages());
-                            Log.d(TAG, "TMDB API Config received");
-                            data.setValue(images);
-                        } else {
-                            data.setValue(null);
-                        }
+                        Images images = Images.getInstance();
+                        images.setImageFields(response.body().getImages());
+                        Log.d(TAG, "TMDB API Config received");
+                        data.setValue(images);
                     }
 
                     @Override
@@ -232,14 +220,10 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<GenresResponse> call,
                                            Response<GenresResponse> response) {
-                        if(response != null) {
-                            GenresResponse genres = GenresResponse.getInstance();
-                            genres.setGenres(response.body().getGenres());
-                            Log.d(TAG, "TMDB Genres received");
-                            data.setValue(genres);
-                        } else {
-                            data.setValue(null);
-                        }
+                        GenresResponse genres = GenresResponse.getInstance();
+                        genres.setGenres(response.body().getGenres());
+                        Log.d(TAG, "TMDB Genres received");
+                        data.setValue(genres);
                     }
 
                     @Override
@@ -267,14 +251,10 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<VideosResponse> call,
                                            Response<VideosResponse> response) {
-                        if(response != null) {
-                            List<Video> trailers = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested trailers for film_id: " + film_id +
-                                    ". Number of trailers received: " + trailers.size());
-                            data.setValue(trailers);
-                        } else {
-                            data.setValue(null);
-                        }
+                        List<Video> trailers = response.body().getResults();
+                        Log.d(TAG, "TMDB - Requested trailers for film_id: " + film_id +
+                                ". Number of trailers received: " + trailers.size());
+                        data.setValue(trailers);
                     }
 
                     @Override
@@ -302,14 +282,10 @@ public class TMDBRepository {
                     @Override
                     public void onResponse(Call<ReviewsResponse> call,
                                            Response<ReviewsResponse> response) {
-                        if(response != null) {
-                            List<Review> reviews = response.body().getResults();
-                            Log.d(TAG, "TMDB - Requested reviews for film_id: " + film_id +
-                                    ". Number of reviews received: " + reviews.size());
-                            data.setValue(reviews);
-                        } else {
-                            data.setValue(null);
-                        }
+                        List<Review> reviews = response.body().getResults();
+                        Log.d(TAG, "TMDB - Requested reviews for film_id: " + film_id +
+                                ". Number of reviews received: " + reviews.size());
+                        data.setValue(reviews);
                     }
 
                     @Override
